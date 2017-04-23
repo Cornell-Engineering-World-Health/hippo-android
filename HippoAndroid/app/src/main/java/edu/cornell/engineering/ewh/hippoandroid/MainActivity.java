@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity  {
                 URL obj = new URL(params[0]);
                 HttpURLConnection httpConnection = (HttpURLConnection) obj.openConnection();
                 httpConnection.setRequestMethod("GET");
-
+                httpConnection.setRequestProperty("Authorization", " Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OGQ2ZmUyODFmY2RlZjAwMTFmNTU0ZjQiLCJpYXQiOjE0OTI5ODI4MTIsImV4cCI6MTQ5NDE5MjQxMn0.3scDrs3eVW53V_zboesXb2tgiyDmlvw98I8TVFgeQaY");
                 int responseCode = httpConnection.getResponseCode();
-
+                Log.i("getMyCalls:", ""+responseCode);
                 if (responseCode == 200) {
                     Log.i("getMyCalls", "[doInBackground] response code = "+responseCode);
 
