@@ -12,14 +12,14 @@ import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import com.opentok.android.OpentokError;
 
-public class MainActivity extends AppCompatActivity implements Session.SessionListener,
+public class VideoCallActivity extends AppCompatActivity implements Session.SessionListener,
         Publisher.PublisherListener, Subscriber.SubscriberListener,
         Subscriber.VideoListener {
 
     public static final String API_KEY = "45817732";
     public static final String SESSION_ID = "1_MX40NTgxNzczMn5-MTQ5Mjk4MDYyNjI5M34yUGRpZUY5cG5MZ0JoRmwwWGp6c2FxZ2J-UH4";
     public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9ZGYzNGI3NmJmMGVhOTU3MTFkMmRkNDY1YWQ3OGQ1MmI2OGJjMDEyYjpzZXNzaW9uX2lkPTFfTVg0ME5UZ3hOemN6TW41LU1UUTVNams0TURZeU5qSTVNMzR5VUdScFpVWTVjRzVNWjBKb1Jtd3dXR3A2YzJGeFoySi1VSDQmY3JlYXRlX3RpbWU9MTQ5Mjk4MDYyNiZub25jZT0wLjkxNjQwOTg0NjA5NjI3MTcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzA2NzAyNg==";
-    public static final String LOGTAG = "MainActivity";
+    public static final String LOGTAG = "VideoCallActivity";
 
     private LinearLayout publisherView;
     private LinearLayout.LayoutParams publisherParams;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements Session.SessionLi
         parentLayout.addView(publisherView);
         parentLayout.addView(subscriberView);
 
-        Session session = new Session(MainActivity.this, API_KEY, SESSION_ID);
+        Session session = new Session(VideoCallActivity.this, API_KEY, SESSION_ID);
         session.setSessionListener(this);
         session.connect(TOKEN);
     }
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements Session.SessionLi
     @Override
     public void onConnected(Session session) {
         Log.i(LOGTAG, "call to onConnected of the SessionListener");
-        Publisher publisher = new Publisher(MainActivity.this);
+        Publisher publisher = new Publisher(VideoCallActivity.this);
         publisher.setPublisherListener(this);
         publisherView.addView(publisher.getView(), publisherParams);
         session.publish(publisher);
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements Session.SessionLi
     @Override
     public void onStreamReceived(Session session, Stream stream) {
         Log.i(LOGTAG, "call to onStreamReceived");
-        Subscriber subscriber = new Subscriber(MainActivity.this, stream);
+        Subscriber subscriber = new Subscriber(VideoCallActivity.this, stream);
         subscriber.setVideoListener(this);
         session.subscribe(subscriber);
         subscriberView.addView(subscriber.getView(), subscriberParams);
