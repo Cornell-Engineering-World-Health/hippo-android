@@ -17,8 +17,8 @@ public class MainActivity extends AppCompatActivity implements Session.SessionLi
         Subscriber.VideoListener {
 
     public static final String API_KEY = "45817732";
-    public static final String SESSION_ID = "2_MX40NTgxNzczMn5-MTQ5MjcxODEzMDU1NH56TklFTG1GU0dXSmVWTkZINWhBK3JvdVZ-UH4";
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9YzgzNzZhMzU2NzEzMDNkYWUzNWM1NTdiZjY4YzRhMWMzYmI1NzJiMDpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNamN4T0RFek1EVTFOSDU2VGtsRlRHMUdVMGRYU21WV1RrWklOV2hCSzNKdmRWWi1VSDQmY3JlYXRlX3RpbWU9MTQ5MjcxODE4NSZub25jZT0wLjA1Mzc2ODk3MjcwODQwMjk3JnJvbGU9cHVibGlzaGVyJmV4cGlyZV90aW1lPTE0OTI4MDQ1ODU=";
+    public static final String SESSION_ID = "1_MX40NTgxNzczMn5-MTQ5Mjk4MDYyNjI5M34yUGRpZUY5cG5MZ0JoRmwwWGp6c2FxZ2J-UH4";
+    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9ZGYzNGI3NmJmMGVhOTU3MTFkMmRkNDY1YWQ3OGQ1MmI2OGJjMDEyYjpzZXNzaW9uX2lkPTFfTVg0ME5UZ3hOemN6TW41LU1UUTVNams0TURZeU5qSTVNMzR5VUdScFpVWTVjRzVNWjBKb1Jtd3dXR3A2YzJGeFoySi1VSDQmY3JlYXRlX3RpbWU9MTQ5Mjk4MDYyNiZub25jZT0wLjkxNjQwOTg0NjA5NjI3MTcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzA2NzAyNg==";
     public static final String LOGTAG = "MainActivity";
 
     private LinearLayout publisherView;
