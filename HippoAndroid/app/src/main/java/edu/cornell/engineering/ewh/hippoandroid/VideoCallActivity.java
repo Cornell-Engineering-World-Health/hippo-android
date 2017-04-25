@@ -1,9 +1,13 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.util.Log;
+import android.widget.RelativeLayout;
+
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
@@ -17,38 +21,48 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Subscriber.VideoListener {
 
     public static final String API_KEY = "45817732";
-    public static final String SESSION_ID = "1_MX40NTgxNzczMn5-MTQ5Mjk4MDYyNjI5M34yUGRpZUY5cG5MZ0JoRmwwWGp6c2FxZ2J-UH4";
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9ZGYzNGI3NmJmMGVhOTU3MTFkMmRkNDY1YWQ3OGQ1MmI2OGJjMDEyYjpzZXNzaW9uX2lkPTFfTVg0ME5UZ3hOemN6TW41LU1UUTVNams0TURZeU5qSTVNMzR5VUdScFpVWTVjRzVNWjBKb1Jtd3dXR3A2YzJGeFoySi1VSDQmY3JlYXRlX3RpbWU9MTQ5Mjk4MDYyNiZub25jZT0wLjkxNjQwOTg0NjA5NjI3MTcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzA2NzAyNg==";
+    public static final String SESSION_ID = "2_MX40NTgxNzczMn5-MTQ5MzE0MzA3NDI4Nn5Xa3J4U2lCRnZxcVN5bUJxM0tQWlpuY0h-UH4";
+    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9NDE0YmE1OWMxYTcxZDM3N2Y5ZWJhNGY5OTI2ZTA5YTZhYWVhNjIwNzpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzE0MzA3NCZub25jZT0wLjkxNTQzOTc0MDU0ODUxNDYmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzIyOTQ3NA==";
     public static final String LOGTAG = "VideoCallActivity";
 
-    private LinearLayout publisherView;
-    private LinearLayout.LayoutParams publisherParams;
-    private LinearLayout subscriberView;
-    private LinearLayout.LayoutParams subscriberParams;
+    private RelativeLayout publisherView;
+    private RelativeLayout.LayoutParams publisherParams;
+    private RelativeLayout subscriberView;
+    private RelativeLayout.LayoutParams subscriberParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(LOGTAG, "call to onCreate");
         super.onCreate(savedInstanceState);
 
-        LinearLayout parentLayout = new LinearLayout(this);
+        RelativeLayout parentLayout = new RelativeLayout(this);
+        RelativeLayout.LayoutParams parentParams = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+        parentLayout.setLayoutParams(parentParams);
         setContentView(parentLayout);
 
-        subscriberView = new LinearLayout(this);
-        subscriberParams = new LinearLayout.LayoutParams
-                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        subscriberParams.weight = 0.5f;
+        subscriberView = new RelativeLayout(this);
+        subscriberParams = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+       // subscriberParams.weight = 1f;
+       // subscriberView.setGravity(Gravity.TOP);
         subscriberView.setLayoutParams(subscriberParams);
 
-        publisherView = new LinearLayout(this);
-        publisherParams = new LinearLayout.LayoutParams
-                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        publisherParams.weight = 0.5f;
+        publisherView = new RelativeLayout(this);
+        publisherParams = new RelativeLayout.LayoutParams(240,320);
+        publisherParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        publisherParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        // (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+       // publisherParams.weight = 0.2f;
+        //publisherView.setGravity(Gravity.BOTTOM);
+       // publisherView.setHorizontalGravity(Gravity.LEFT);
         publisherView.setLayoutParams(publisherParams);
 
-        parentLayout.setWeightSum(1f);
-        parentLayout.addView(publisherView);
+        //parentLayout.setWeightSum(1f);
         parentLayout.addView(subscriberView);
+        parentLayout.addView(publisherView);
 
         Session session = new Session(VideoCallActivity.this, API_KEY, SESSION_ID);
         session.setSessionListener(this);
@@ -60,7 +74,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Log.i(LOGTAG, "call to onConnected of the SessionListener");
         Publisher publisher = new Publisher(VideoCallActivity.this);
         publisher.setPublisherListener(this);
-        publisherView.addView(publisher.getView(), publisherParams);
+        publisherView.addView(publisher.getView());
         session.publish(publisher);
     }
 
@@ -70,7 +84,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Subscriber subscriber = new Subscriber(VideoCallActivity.this, stream);
         subscriber.setVideoListener(this);
         session.subscribe(subscriber);
-        subscriberView.addView(subscriber.getView(), subscriberParams);
+        subscriberView.addView(subscriber.getView());
     }
 
     @Override
