@@ -3,6 +3,8 @@ package edu.cornell.engineering.ewh.hippoandroid;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,7 +45,6 @@ public class AsyncCall extends AsyncTask<String, Void, String> {
                     response.append(responseLine+"\n");
                 }
                 responseReader.close();
-
                 // print result
                 Log.i("allSessions: ", response.toString());
             }
