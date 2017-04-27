@@ -4,9 +4,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.util.Log;
 import android.widget.RelativeLayout;
+import android.widget.ToggleButton;
 
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
@@ -22,13 +26,15 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
 
     public static final String API_KEY = "45817732";
     public static final String SESSION_ID = "2_MX40NTgxNzczMn5-MTQ5MzE0MzA3NDI4Nn5Xa3J4U2lCRnZxcVN5bUJxM0tQWlpuY0h-UH4";
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9NDE0YmE1OWMxYTcxZDM3N2Y5ZWJhNGY5OTI2ZTA5YTZhYWVhNjIwNzpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzE0MzA3NCZub25jZT0wLjkxNTQzOTc0MDU0ODUxNDYmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzIyOTQ3NA==";
+    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9NzMyYjcwZjVlMzE0MGIxNzJkNzU3OTgyNTdlZmVkNjkzMGYyOWNiOTpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzMyNjEyNCZub25jZT0wLjM1MTEzNDI3MjA1NjUyODkmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzQxMjUyNA==";
     public static final String LOGTAG = "VideoCallActivity";
 
     private RelativeLayout publisherView;
     private RelativeLayout.LayoutParams publisherParams;
     private RelativeLayout subscriberView;
     private RelativeLayout.LayoutParams subscriberParams;
+    private RelativeLayout buttonView;
+    private RelativeLayout.LayoutParams buttonParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +66,50 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
        // publisherView.setHorizontalGravity(Gravity.LEFT);
         publisherView.setLayoutParams(publisherParams);
 
+        buttonView = new RelativeLayout(this);
+        buttonParams = new RelativeLayout.LayoutParams(400,200);
+        buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        buttonView.setLayoutParams(buttonParams);
+
         //parentLayout.setWeightSum(1f);
         parentLayout.addView(subscriberView);
         parentLayout.addView(publisherView);
+        parentLayout.addView(buttonView);
 
-        Session session = new Session(VideoCallActivity.this, API_KEY, SESSION_ID);
+        final Session session = new Session(VideoCallActivity.this, API_KEY, SESSION_ID);
         session.setSessionListener(this);
         session.connect(TOKEN);
     }
 
     @Override
-    public void onConnected(Session session) {
+    public void onConnected(final Session session) {
         Log.i(LOGTAG, "call to onConnected of the SessionListener");
-        Publisher publisher = new Publisher(VideoCallActivity.this);
+        final Publisher publisher = new Publisher(VideoCallActivity.this);
         publisher.setPublisherListener(this);
         publisherView.addView(publisher.getView());
         session.publish(publisher);
+
+        ToggleButton endCall = new ToggleButton(this);
+        endCall.setChecked(true);
+        endCall.setText("Video Off");
+        endCall.setTextOn("Video Off");
+        endCall.setTextOff("Video On");
+        endCall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    Log.w(LOGTAG, "PUBLISHING");
+                    //session.publish(publisher);
+                    publisher.setPublishVideo(true);
+                }
+                else {
+                    Log.w(LOGTAG, "UNPUBLISHING");
+                    //session.unpublish(publisher);
+                    publisher.setPublishVideo(false);
+                }
+            }
+        });
+        buttonView.addView(endCall);
     }
 
     @Override
