@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             JSONObject jsonObject = new JSONObject(output);
             JSONArray calls = jsonObject.getJSONArray("calls");
             CallSession[] sessions = new CallSession[calls.length()];
+
             for(int i = 0; i<calls.length();i++){
                 JSONObject call = calls.getJSONObject(i);
                 JSONArray participants = call.getJSONArray("participants");
@@ -70,11 +71,22 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
             }
 
-            System.out.println(sessions);
+            try {
+                ArrayAdapter<CallSession> sessionsAdapter;
+                sessionsAdapter = new ArrayAdapter<CallSession>(getApplicationContext(), R.layout.session_item, sessions);
+
+                ListView sessionListView = (ListView) findViewById(R.id.session_list);
+                sessionListView.setAdapter(sessionsAdapter);
+            }
+            catch(Exception e) {
+                Log.d("processFinish", "Error while creating list view: "+e);
+            }
+
         } catch(Exception e) {
-            System.out.println("Error while processing JSON");
+            Log.d("processFinish", "Error while processing JSON: "+e.getMessage());
         }
-        System.out.println("ProcessFinish: "+output);
+
+
     }
 
 }
