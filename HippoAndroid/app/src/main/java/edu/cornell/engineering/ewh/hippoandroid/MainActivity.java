@@ -4,8 +4,12 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.StringBuilderPrinter;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.util.Log;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
@@ -35,8 +39,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         Log.i("Main: ", "call to onCreate");
         super.onCreate(savedInstanceState);
 
-        LinearLayout parentLayout = new LinearLayout(this);
-        setContentView(parentLayout);
+        setContentView(R.layout.activity_main);
 
         //this to set delegate/listener back to this class
         getSessions.delegate = this;
