@@ -1,38 +1,22 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.StringBuilderPrinter;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import com.opentok.android.Publisher;
-import com.opentok.android.PublisherKit;
-import com.opentok.android.Session;
-import com.opentok.android.Stream;
-import com.opentok.android.Subscriber;
-import com.opentok.android.SubscriberKit;
-import com.opentok.android.OpentokError;
+import android.content.Intent;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
+    public static final String SESSION_NAME = "edu.cornell.engineering.ewh.hippoandroid.SESSION_NAME";
+
     AsyncCall getSessions = new AsyncCall();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         try{
             JSONObject jsonObject = new JSONObject(output);
             JSONArray calls = jsonObject.getJSONArray("calls");
-            CallSession[] sessions = new CallSession[calls.length()];
+            final CallSession[] sessions = new CallSession[calls.length()];
 
             for(int i = 0; i<calls.length();i++){
                 JSONObject call = calls.getJSONObject(i);
@@ -77,6 +61,21 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
                 ListView sessionListView = (ListView) findViewById(R.id.session_list);
                 sessionListView.setAdapter(sessionsAdapter);
+                sessionListView.setOnItemClickListener(new OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent,
+                                            View view,
+                                            int position,
+                                            long id) {
+                        // Get clicked Session.
+                        CallSession call = sessions[position];
+                        Intent intent = new Intent(MainActivity.this, VideoCallActivityTemp.class);
+                        intent.putExtra(SESSION_NAME, call.getName());
+                        startActivity(intent);
+                    }
+                });
+
             }
             catch(Exception e) {
                 Log.d("processFinish", "Error while creating list view: "+e);
