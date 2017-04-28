@@ -37,16 +37,22 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         try{
             JSONObject jsonObject = new JSONObject(output);
             JSONArray calls = jsonObject.getJSONArray("calls");
+            int myUserId = jsonObject.getInt("userId");
+
             final CallSession[] sessions = new CallSession[calls.length()];
 
             for(int i = 0; i<calls.length();i++){
                 JSONObject call = calls.getJSONObject(i);
                 JSONArray participants = call.getJSONArray("participants");
-                User[] users = new User[participants.length()];
+                User[] users = new User[participants.length()-1];
+                int k = 0;
                 for(int j = 0; j< participants.length(); j++){
                     JSONObject member = participants.getJSONObject(j);
-                    users[j] = new User(member.getString("userId"), member.getString("email"),
-                            member.getString("lastName"), member.getString("firstName"), member.getString("calls"));
+                    int pUserId = member.getInt("userId");
+                    if(myUserId != pUserId){
+                        users[k++] = new User(pUserId, member.getString("email"),
+                                member.getString("lastName"), member.getString("firstName"), member.getString("calls"));
+                    }
                 }
 
                 sessions[i] = new CallSession(call.getString("endTime"), call.getString("startTime"),

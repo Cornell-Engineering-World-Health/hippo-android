@@ -6,10 +6,11 @@ package edu.cornell.engineering.ewh.hippoandroid;
 
 public class User{
 
-    private String userId, email, lastName, firstName;
+    private int userId;
+    private String email, lastName, firstName;
     private Object calls;
 
-    public User(String userId, String email, String lastName, String firstName, Object calls){
+    public User(int userId, String email, String lastName, String firstName, Object calls){
         this.userId = userId;
         this.email = email;
         this.lastName = lastName;
@@ -17,7 +18,7 @@ public class User{
         this.calls = calls;
     }
 
-    public String getUserId(){
+    public int getUserId(){
         return userId;
     }
     public String getEmail(){

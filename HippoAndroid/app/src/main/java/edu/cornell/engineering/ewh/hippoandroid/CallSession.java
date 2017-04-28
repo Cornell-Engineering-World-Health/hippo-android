@@ -12,14 +12,12 @@ public class CallSession {
 
     public CallSession(String endTime, String startTime, String dateTime, String sessionId, String name,
                    boolean active, User[] participants) {
-        this.endTime = endTime;
-        this.startTime = startTime;
+        this.endTime = reformatDate(endTime);
+        this.startTime = reformatDate(startTime);
         this.dateTime = dateTime;
         this.sessionId = sessionId;
         this.name = name;
         this.active = active;
-
-        //TODO: Filter out yourself from participants.
         this.participants = participants;
     }
 
@@ -45,12 +43,19 @@ public class CallSession {
         return participants;
     }
 
-    //TODO: Pretty print the times
+    private String reformatDate(String date){
+        int hour = Integer.valueOf(date.substring(11,13));
+        if(hour < 12)
+            return date.substring(0,10) + ", " + date.substring(11, 19)+ " AM";
+        else
+            return date.substring(0,10) + ", " + (hour-12) + date.substring(13,19) + " PM";
+    }
+
     public String toString(){
         String desc =  name+"\nStart Time: "+startTime+"\nEnd Time: "+endTime+"\nParticipants: ";
         for(User u: participants){
             desc += u.toString()+", ";
         }
-        return desc;
+        return desc.substring(0,desc.length()-2);
     }
 }
