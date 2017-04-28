@@ -18,6 +18,8 @@ public class CallSession {
         this.sessionId = sessionId;
         this.name = name;
         this.active = active;
+
+        //TODO: Filter out yourself from participants.
         this.participants = participants;
     }
 
@@ -42,10 +44,12 @@ public class CallSession {
     public User[] getParticipants(){
         return participants;
     }
+
+    //TODO: Pretty print the times
     public String toString(){
-        String desc =  name+", "+sessionId+", "+dateTime+", "+startTime+", "+endTime+", "+active+"\n";
+        String desc =  name+"\nStart Time: "+startTime+"\nEnd Time: "+endTime+"\nParticipants: ";
         for(User u: participants){
-            desc += u.toString()+"\n";
+            desc += u.toString()+", ";
         }
         return desc;
     }
