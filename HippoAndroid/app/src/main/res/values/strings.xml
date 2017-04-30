@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HippoAndroid</string>
+    <string name="session_list_title">Session List</string>
 </resources>
