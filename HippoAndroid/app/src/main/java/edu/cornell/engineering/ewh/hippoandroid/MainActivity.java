@@ -2,6 +2,8 @@ package edu.cornell.engineering.ewh.hippoandroid;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.StringBuilderPrinter;
 import android.widget.ArrayAdapter;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,8 +24,10 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("Main: ", "call to onCreate");
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         //this to set delegate/listener back to this class
         getSessions.delegate = this;
