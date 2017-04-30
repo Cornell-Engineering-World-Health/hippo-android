@@ -6,10 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
@@ -21,13 +24,16 @@ import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import com.opentok.android.OpentokError;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class VideoCallActivity extends AppCompatActivity implements Session.SessionListener,
         Publisher.PublisherListener, Subscriber.SubscriberListener,
-        Subscriber.VideoListener {
+        Subscriber.VideoListener, AsyncResponse {
 
     public static final String API_KEY = "45817732";
-    public static final String SESSION_ID = "2_MX40NTgxNzczMn5-MTQ5MzE0MzA3NDI4Nn5Xa3J4U2lCRnZxcVN5bUJxM0tQWlpuY0h-UH4";
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9YzNkZDBhZjdkNTcyMDc3MTRiODZlMzg4ZjA3NzY4Y2YzYmM1NDliNTpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzU4NTczNCZub25jZT0wLjgyODUwNTMxMzc3MjExMTcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzY3MjEzNA==";
+    public static String SESSION_ID; //= "2_MX40NTgxNzczMn5-MTQ5MzE0MzA3NDI4Nn5Xa3J4U2lCRnZxcVN5bUJxM0tQWlpuY0h-UH4";
+    public static String TOKEN; //= "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9YzNkZDBhZjdkNTcyMDc3MTRiODZlMzg4ZjA3NzY4Y2YzYmM1NDliNTpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzU4NTczNCZub25jZT0wLjgyODUwNTMxMzc3MjExMTcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzY3MjEzNA==";
     public static final String LOGTAG = "VideoCallActivity";
 
     private RelativeLayout publisherView;
@@ -37,6 +43,8 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private RelativeLayout buttonView;
     private RelativeLayout.LayoutParams buttonParams;
 
+    AsyncCall getSession = new AsyncCall();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(LOGTAG, "call to onCreate");
@@ -45,39 +53,56 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Intent intent = getIntent();
         String sessionName = intent.getStringExtra(MainActivity.SESSION_NAME);
 
+        //this to set delegate/listener back to this class
+        getSession.delegate = this;
 
+        //execute the async task
+        getSession.execute("https://ewh-hippo.herokuapp.com/api/videos/" + sessionName);
+    }
 
-        RelativeLayout parentLayout = new RelativeLayout(this);
-        RelativeLayout.LayoutParams parentParams = new RelativeLayout.LayoutParams
-                (RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-        parentLayout.setLayoutParams(parentParams);
-        setContentView(parentLayout);
+    public void processFinish(String output) {
 
-        subscriberView = new RelativeLayout(this);
-        subscriberParams = new RelativeLayout.LayoutParams
-                (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        subscriberView.setLayoutParams(subscriberParams);
+        try{
+            JSONObject jsonObject = new JSONObject(output);
+            SESSION_ID = jsonObject.getString("sessionId");
+            TOKEN = jsonObject.getString("tokenId");
 
-        publisherView = new RelativeLayout(this);
-        publisherParams = new RelativeLayout.LayoutParams(240,320);
-        publisherParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        publisherParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        publisherView.setLayoutParams(publisherParams);
+            RelativeLayout parentLayout = new RelativeLayout(this);
+            RelativeLayout.LayoutParams parentParams = new RelativeLayout.LayoutParams
+                    (RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+            parentLayout.setLayoutParams(parentParams);
+            setContentView(parentLayout);
 
-        buttonView = new RelativeLayout(this);
-        buttonParams = new RelativeLayout.LayoutParams(400,200);
-        buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        buttonView.setLayoutParams(buttonParams);
+            subscriberView = new RelativeLayout(this);
+            subscriberParams = new RelativeLayout.LayoutParams
+                    (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            subscriberView.setLayoutParams(subscriberParams);
 
-        parentLayout.addView(subscriberView);
-        parentLayout.addView(publisherView);
-        parentLayout.addView(buttonView);
+            publisherView = new RelativeLayout(this);
+            publisherParams = new RelativeLayout.LayoutParams(240,320);
+            publisherParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            publisherParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            publisherView.setLayoutParams(publisherParams);
 
-        final Session session = new Session(VideoCallActivity.this, API_KEY, SESSION_ID);
-        session.setSessionListener(this);
-        session.connect(TOKEN);
+            buttonView = new RelativeLayout(this);
+            buttonParams = new RelativeLayout.LayoutParams(800,200);
+            buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            buttonView.setLayoutParams(buttonParams);
+
+            parentLayout.addView(subscriberView);
+            parentLayout.addView(publisherView);
+            parentLayout.addView(buttonView);
+
+            final Session session = new Session(VideoCallActivity.this, API_KEY, SESSION_ID);
+            session.setSessionListener(this);
+            session.connect(TOKEN);
+
+        } catch(Exception e) {
+            Log.d("processFinish", "Error while processing JSON: "+e.getMessage());
+        }
     }
 
     @Override
@@ -106,6 +131,9 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 }
             }
         });
+        RelativeLayout.LayoutParams toggleVideoParams = new RelativeLayout.LayoutParams(400,200);
+        toggleVideoParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        toggleVideo.setLayoutParams(toggleVideoParams);
         buttonView.addView(toggleVideo);
 
         Button endCall = new Button(this);
@@ -113,8 +141,13 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         endCall.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 publisher.destroy();
+                Intent intent = new Intent(VideoCallActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
+        RelativeLayout.LayoutParams endCallParams = new RelativeLayout.LayoutParams(400,200);
+        endCallParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        endCall.setLayoutParams(endCallParams);
         buttonView.addView(endCall);
     }
 
