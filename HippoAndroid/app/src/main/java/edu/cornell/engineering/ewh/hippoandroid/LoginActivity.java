@@ -162,7 +162,6 @@ public class LoginActivity extends AppCompatActivity implements
 
     // [START signIn]
     private void signIn() {
-        Log.d("printTag", "IN SIGNIN");
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -198,7 +197,6 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("printTag", "IN CONNECTION FAILED");
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
@@ -224,11 +222,9 @@ public class LoginActivity extends AppCompatActivity implements
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE); // will need in nav
-            Intent i = new Intent(this, testRedirect.class);
+            Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         } else {
-//            mStatusTextView.setText(R.string.signed_out);
-
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
@@ -236,7 +232,6 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        Log.d("printTag", "IN ONCLICK");
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();

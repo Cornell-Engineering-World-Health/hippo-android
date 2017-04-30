@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HippoAndroid</string>
+    <string name="app_name">Hippo</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
@@ -35,4 +35,5 @@
     <string name="disconnect">Disconnect</string>
     <string name="title_activity_test_redirect">testRedirect</string>
 
+    <string name="session_list_title">Session List</string>
 </resources>
