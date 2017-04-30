@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,22 +20,7 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import org.json.*;
 import com.loopj.android.http.*;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import cz.msebera.android.httpclient.entity.mime.Header;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -72,8 +56,8 @@ public class LoginActivity extends AppCompatActivity implements
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.request_id_token_frank))
-                .requestServerAuthCode(getString(R.string.request_id_token_frank))
+                .requestIdToken(getString(R.string.request_id_token))
+                .requestServerAuthCode(getString(R.string.request_id_token))
                 .requestEmail()
                 .build();
         // [END configure_signin]
@@ -144,7 +128,7 @@ public class LoginActivity extends AppCompatActivity implements
             GoogleSignInAccount acct = result.getSignInAccount();
 
             String authCode = acct.getServerAuthCode();
-            String clientId = getString(R.string.request_id_token_frank);
+            String clientId = getString(R.string.request_id_token);
 
             AsyncHttpClient client = new AsyncHttpClient();
             String rel_url = "auth/google/";
