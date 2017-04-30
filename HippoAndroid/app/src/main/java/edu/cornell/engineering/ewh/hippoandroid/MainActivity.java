@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                                             long id) {
                         // Get clicked Session.
                         CallSession call = sessions[position];
-                        Intent intent = new Intent(MainActivity.this, VideoCallActivityTemp.class);
+                        Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
                         intent.putExtra(SESSION_NAME, call.getName());
                         startActivity(intent);
                     }
