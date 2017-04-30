@@ -87,7 +87,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
             publisherView.setLayoutParams(publisherParams);
 
             buttonView = new RelativeLayout(this);
-            buttonParams = new RelativeLayout.LayoutParams(800,200);
+            buttonParams = new RelativeLayout.LayoutParams(1200,200);
             buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             buttonView.setLayoutParams(buttonParams);
@@ -135,6 +135,27 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         toggleVideoParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         toggleVideo.setLayoutParams(toggleVideoParams);
         buttonView.addView(toggleVideo);
+
+        ToggleButton toggleAudio = new ToggleButton(this);
+        toggleAudio.setChecked(true);
+        toggleAudio.setText("Mute");
+        toggleAudio.setTextOn("Mute");
+        toggleAudio.setTextOff("Unmute");
+        toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    publisher.setPublishAudio(true);
+                }
+                else {
+                    publisher.setPublishAudio(false);
+                }
+            }
+        });
+        RelativeLayout.LayoutParams toggleAudioParams = new RelativeLayout.LayoutParams(400,200);
+        toggleAudioParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        toggleAudio.setLayoutParams(toggleAudioParams);
+        buttonView.addView(toggleAudio);
 
         Button endCall = new Button(this);
         endCall.setText("End Call");
