@@ -56,7 +56,7 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
 //            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
             //Request Parameters you want to send
-            String urlParameters = "code=4/lgmLOgQCRoQB-4H2ToPOiBe1jI4WNf9Etm8OY4BERW0";
+            String urlParameters = "code=4/lgmLOgQCRoQB-4H2ToPOiBe1jI4WNf9Etm8OY4BERW0&redirectUri=http://localhost:8080&clientId=707301966243-kbftfe8f7hb0hqv6eu7pkgg02gfhbhlc.apps.googleusercontent.com";
 
             // Send post request
 //            con.setDoOutput(true);// Should be part of code only for .Net web-services else no need for PHP
