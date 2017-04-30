@@ -36,7 +36,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import cz.msebera.android.httpclient.entity.mime.Header;
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -58,9 +58,9 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d("printTag", "IN CREATE");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        new GoogleRestClient().execute("https://ewh-hippo.herokuapp.com/auth/google");
+//        new GoogleRestClient().execute("https://ewh-hippo.herokuapp.com/auth/google");
 
-        // Views
+            // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Button listeners
@@ -145,13 +145,16 @@ public class LoginActivity extends AppCompatActivity implements
 
             AsyncHttpClient client = new AsyncHttpClient();
             String rel_url = "auth/google/";
+            GoogleRestClient clientR = new GoogleRestClient();
+            clientR.authCode = authCode;
+            clientR.execute("https://ewh-hippo.herokuapp.com/auth/google");
 
 //            RequestParams params = new RequestParams();
 //            params.put("code", "authCode");
 //            params.put("clientId", R.string.request_id_token_lillyan);
 //            params.put("redirectUri", "http://localhost:8080");
 //
-////            makeHTTPCall(rel_url, params);
+//            makeHTTPCall();
 //            try {
 //                new GoogleRestClient().execute("https://ewh-hippo.herokuapp.com/auth/google");
 //            } catch (Exception e) {
@@ -282,6 +285,25 @@ public class LoginActivity extends AppCompatActivity implements
 //                }
 //            }
 //        });
-//    }
+    public void makeHTTPCall() {
+        String url = "https://ajax.googleapis.com/ajax/services/search/images";
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("q", "android");
+        params.put("rsz", "8");
+        client.get(url, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+                System.out.println(response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+            }
+        });
+    }
 
 }
