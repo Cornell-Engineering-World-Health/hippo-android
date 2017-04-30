@@ -26,7 +26,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
 
     public static final String API_KEY = "45817732";
     public static final String SESSION_ID = "2_MX40NTgxNzczMn5-MTQ5MzE0MzA3NDI4Nn5Xa3J4U2lCRnZxcVN5bUJxM0tQWlpuY0h-UH4";
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9NzMyYjcwZjVlMzE0MGIxNzJkNzU3OTgyNTdlZmVkNjkzMGYyOWNiOTpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzMyNjEyNCZub25jZT0wLjM1MTEzNDI3MjA1NjUyODkmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzQxMjUyNA==";
+    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9YzNkZDBhZjdkNTcyMDc3MTRiODZlMzg4ZjA3NzY4Y2YzYmM1NDliNTpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzU4NTczNCZub25jZT0wLjgyODUwNTMxMzc3MjExMTcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzY3MjEzNA==";
     public static final String LOGTAG = "VideoCallActivity";
 
     private RelativeLayout publisherView;
@@ -52,18 +52,12 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-       // subscriberParams.weight = 1f;
-       // subscriberView.setGravity(Gravity.TOP);
         subscriberView.setLayoutParams(subscriberParams);
 
         publisherView = new RelativeLayout(this);
         publisherParams = new RelativeLayout.LayoutParams(240,320);
         publisherParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         publisherParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        // (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-       // publisherParams.weight = 0.2f;
-        //publisherView.setGravity(Gravity.BOTTOM);
-       // publisherView.setHorizontalGravity(Gravity.LEFT);
         publisherView.setLayoutParams(publisherParams);
 
         buttonView = new RelativeLayout(this);
@@ -71,7 +65,6 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         buttonView.setLayoutParams(buttonParams);
 
-        //parentLayout.setWeightSum(1f);
         parentLayout.addView(subscriberView);
         parentLayout.addView(publisherView);
         parentLayout.addView(buttonView);
@@ -89,24 +82,31 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         publisherView.addView(publisher.getView());
         session.publish(publisher);
 
-        ToggleButton endCall = new ToggleButton(this);
-        endCall.setChecked(true);
-        endCall.setText("Video Off");
-        endCall.setTextOn("Video Off");
-        endCall.setTextOff("Video On");
-        endCall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        ToggleButton toggleVideo = new ToggleButton(this);
+        toggleVideo.setChecked(true);
+        toggleVideo.setText("Video Off");
+        toggleVideo.setTextOn("Video Off");
+        toggleVideo.setTextOff("Video On");
+        toggleVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    Log.w(LOGTAG, "PUBLISHING");
-                    //session.publish(publisher);
+                    Log.i(LOGTAG, "PUBLISHING");
                     publisher.setPublishVideo(true);
                 }
                 else {
-                    Log.w(LOGTAG, "UNPUBLISHING");
-                    //session.unpublish(publisher);
+                    Log.i(LOGTAG, "UNPUBLISHING");
                     publisher.setPublishVideo(false);
                 }
+            }
+        });
+        buttonView.addView(toggleVideo);
+
+        Button endCall = new Button(this);
+        endCall.setText("End Call");
+        endCall.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                publisher.destroy();
             }
         });
         buttonView.addView(endCall);
