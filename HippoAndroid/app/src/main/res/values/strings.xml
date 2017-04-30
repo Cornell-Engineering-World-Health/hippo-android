@@ -14,6 +14,13 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="request_id_token_frank">"789185821228-jkliab3iscephfdr47h9184kn1bh2t1j.apps.googleusercontent.com"
+    </string>
+    <string name="request_id_token_lillyan">"707301966243-kbftfe8f7hb0hqv6eu7pkgg02gfhbhlc.apps.googleusercontent.com"
+    </string>
+    <!--<string name="request_id_token">"789185821228-lmogq9sp8jvqmotcsebac13ouhq1t6cm.apps.googleusercontent.com"-->
+    <!--</string>-->
+
 
     <string name="title_text">Hippo</string>
 
@@ -26,5 +33,6 @@
     <string name="desc_google_icon">Google Logo</string>
 
     <string name="disconnect">Disconnect</string>
+    <string name="title_activity_test_redirect">testRedirect</string>
 
 </resources>

@@ -2,7 +2,9 @@ package edu.cornell.engineering.ewh.hippoandroid;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +20,23 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import org.json.*;
+import com.loopj.android.http.*;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import cz.msebera.android.httpclient.entity.mime.Header;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -36,13 +55,13 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("printTag", "IN CREATE");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        new GoogleRestClient().execute("https://ewh-hippo.herokuapp.com/auth/google");
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
-
-        System.out.println("HELLO: " + findViewById(R.id.sign_in_button));
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -53,7 +72,8 @@ public class LoginActivity extends AppCompatActivity implements
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("789185821228-jkliab3iscephfdr47h9184kn1bh2t1j.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.request_id_token_lillyan))
+                .requestServerAuthCode(getString(R.string.request_id_token_lillyan))
                 .requestEmail()
                 .build();
         // [END configure_signin]
@@ -103,6 +123,7 @@ public class LoginActivity extends AppCompatActivity implements
     // [START onActivityResult]
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("printTag", "IN on activity RESULT");
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -119,6 +140,34 @@ public class LoginActivity extends AppCompatActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            String idToken = acct.getIdToken();
+            String authCode = acct.getServerAuthCode();
+
+            AsyncHttpClient client = new AsyncHttpClient();
+            String rel_url = "auth/google/";
+
+//            RequestParams params = new RequestParams();
+//            params.put("code", "authCode");
+//            params.put("clientId", R.string.request_id_token_lillyan);
+//            params.put("redirectUri", "http://localhost:8080");
+//
+////            makeHTTPCall(rel_url, params);
+//            try {
+//                new GoogleRestClient().execute("https://ewh-hippo.herokuapp.com/auth/google");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+
+
+            // Save Token
+            SharedPreferences sharedPreferences = getSharedPreferences("APP", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("G_TOKEN", idToken);
+            editor.putString("AUTH_CODE", authCode);
+            editor.commit();
+
+            Log.d(TAG, "ID Token: " + idToken);
+
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
         } else {
@@ -130,6 +179,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     // [START signIn]
     private void signIn() {
+        Log.d("printTag", "IN SIGNIN");
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -165,6 +215,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d("printTag", "IN CONNECTION FAILED");
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
@@ -189,7 +240,9 @@ public class LoginActivity extends AppCompatActivity implements
     private void updateUI(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE); // will need in nav
+//            Intent i = new Intent(this, testRedirect.class);
+//            startActivity(i);
         } else {
             mStatusTextView.setText(R.string.signed_out);
 
@@ -200,6 +253,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
+        Log.d("printTag", "IN ONCLICK");
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
@@ -212,4 +266,22 @@ public class LoginActivity extends AppCompatActivity implements
                 break;
         }
     }
+
+//    public void makeHTTPCall(String rel_url, RequestParams params) {
+//        GoogleRestClient.post(rel_url, params, new JsonHttpResponseHandler() {
+////            @Override
+//            public void onSuccess(JSONObject response) {
+//                // If the response is JSONObject instead of expected JSONArray
+//                System.out.print(response);
+//            }
+//
+////            @Override
+//            public void onFailure( byte[] errorResponse, Throwable e) {
+//                if (errorResponse != null) {
+//                    Log.d(TAG, new String(errorResponse));
+//                }
+//            }
+//        });
+//    }
+
 }

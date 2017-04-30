@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "707301966243",
+    "project_id": "ewh-temp"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707301966243:android:04ed288507de3ba0",
+        "android_client_info": {
+          "package_name": "edu.cornell.engineering.ewh.hippoandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707301966243-g74rr70g7dclbjoo1n63sq7ausio9abe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.cornell.engineering.ewh.hippoandroid",
+            "certificate_hash": "6b00d9f33450b30ea16bd15734f09e27b13a1f04"
+          }
+        },
+        {
+          "client_id": "707301966243-kbftfe8f7hb0hqv6eu7pkgg02gfhbhlc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgVE8e6jxQxb64Y4SYPE995JCjr8fBGKI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
