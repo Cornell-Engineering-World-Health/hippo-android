@@ -3,7 +3,7 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_grey_700"
+    android:background="@android:color/white"
     android:orientation="vertical"
     android:weightSum="4"
     tools:context="edu.cornell.engineering.ewh.hippoandroid.LoginActivity">
@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="2"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -19,40 +19,40 @@
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_centerInParent="true"
+            android:drawableLeft="@drawable/hippo"
             android:text="@string/title_text"
             android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="36sp" />
+            android:textColor="@android:color/black"
+            android:textSize="60sp" />
 
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/signed_out"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+        <!--<TextView-->
+            <!--android:id="@+id/status"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/signed_out"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textSize="14sp" />-->
 
-        <TextView
-            android:id="@+id/detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fadeScrollbars="true"
-            android:gravity="center"
-            android:maxLines="5"
-            android:padding="10dp"
-            android:scrollbars="vertical"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+        <!--<TextView-->
+            <!--android:id="@+id/detail"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:fadeScrollbars="true"-->
+            <!--android:gravity="center"-->
+            <!--android:maxLines="5"-->
+            <!--android:padding="10dp"-->
+            <!--android:scrollbars="vertical"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="14sp" />-->
 
-        <Button
-            android:id="@+id/button_optional_action"
-            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:text="Optional Action"
-            tools:visibility="visible" />
+        <!--<Button-->
+            <!--android:id="@+id/button_optional_action"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:visibility="gone"-->
+            <!--tools:text="Optional Action"-->
+            <!--tools:visibility="visible" />-->
 
     </LinearLayout>
 
@@ -60,8 +60,8 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/blue_grey_900">
+        android:layout_weight="2"
+        android:background="@android:color/white">
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"

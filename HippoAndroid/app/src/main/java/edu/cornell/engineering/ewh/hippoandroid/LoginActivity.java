@@ -44,13 +44,14 @@ import cz.msebera.android.httpclient.entity.mime.Header;
  */
 public class LoginActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        View.OnClickListener,
+        AsyncResponse {
 
     private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleApiClient mGoogleApiClient;
-    private TextView mStatusTextView;
+//    private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -58,10 +59,9 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d("printTag", "IN CREATE");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        new GoogleRestClient().execute("https://ewh-hippo.herokuapp.com/auth/google");
 
         // Views
-        mStatusTextView = (TextView) findViewById(R.id.status);
+//        mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -72,8 +72,8 @@ public class LoginActivity extends AppCompatActivity implements
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.request_id_token_lillyan))
-                .requestServerAuthCode(getString(R.string.request_id_token_lillyan))
+                .requestIdToken(getString(R.string.request_id_token_frank))
+                .requestServerAuthCode(getString(R.string.request_id_token_frank))
                 .requestEmail()
                 .build();
         // [END configure_signin]
@@ -91,6 +91,8 @@ public class LoginActivity extends AppCompatActivity implements
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+        setGooglePlusTextAllCaps(signInButton, true);
         // [END customize_button]
     }
 
@@ -140,35 +142,16 @@ public class LoginActivity extends AppCompatActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            String idToken = acct.getIdToken();
+
             String authCode = acct.getServerAuthCode();
+            String clientId = getString(R.string.request_id_token_frank);
 
             AsyncHttpClient client = new AsyncHttpClient();
             String rel_url = "auth/google/";
+            GoogleRestClient clientR = new GoogleRestClient();
+            clientR.execute(clientId, authCode);
 
-//            RequestParams params = new RequestParams();
-//            params.put("code", "authCode");
-//            params.put("clientId", R.string.request_id_token_lillyan);
-//            params.put("redirectUri", "http://localhost:8080");
-//
-////            makeHTTPCall(rel_url, params);
-//            try {
-//                new GoogleRestClient().execute("https://ewh-hippo.herokuapp.com/auth/google");
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-
-
-            // Save Token
-            SharedPreferences sharedPreferences = getSharedPreferences("APP", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("G_TOKEN", idToken);
-            editor.putString("AUTH_CODE", authCode);
-            editor.commit();
-
-            Log.d(TAG, "ID Token: " + idToken);
-
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+//            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
@@ -241,10 +224,10 @@ public class LoginActivity extends AppCompatActivity implements
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE); // will need in nav
-//            Intent i = new Intent(this, testRedirect.class);
-//            startActivity(i);
+            Intent i = new Intent(this, testRedirect.class);
+            startActivity(i);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
+//            mStatusTextView.setText(R.string.signed_out);
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
@@ -267,21 +250,30 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-//    public void makeHTTPCall(String rel_url, RequestParams params) {
-//        GoogleRestClient.post(rel_url, params, new JsonHttpResponseHandler() {
-////            @Override
-//            public void onSuccess(JSONObject response) {
-//                // If the response is JSONObject instead of expected JSONArray
-//                System.out.print(response);
-//            }
-//
-////            @Override
-//            public void onFailure( byte[] errorResponse, Throwable e) {
-//                if (errorResponse != null) {
-//                    Log.d(TAG, new String(errorResponse));
-//                }
-//            }
-//        });
-//    }
 
+    public static void setGooglePlusTextAllCaps(SignInButton signInButton, boolean allCaps)
+    {
+        for (int i = 0; i < signInButton.getChildCount(); i++)
+        {
+            View v = signInButton.getChildAt(i);
+
+            if (v instanceof TextView)
+            {
+                TextView tv = (TextView) v;
+                tv.setAllCaps(allCaps);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void processFinish(String response) {
+        // Save Token
+        SharedPreferences sharedPreferences = getSharedPreferences("APP", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("G_TOKEN", response);
+        editor.commit();
+
+        Log.d(TAG, "ID Token: " + response);
+    }
 }
