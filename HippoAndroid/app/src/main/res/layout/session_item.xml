@@ -4,6 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:textColor="@color/abc_input_method_navigation_guard"
-    android:textSize="18sp">
+    android:textSize="14sp">
 
 </TextView>

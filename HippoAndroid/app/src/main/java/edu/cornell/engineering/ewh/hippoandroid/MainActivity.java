@@ -1,5 +1,6 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.util.Log;
 import android.widget.ListView;
 import android.content.Intent;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +30,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView mTitle = (TextView) myToolbar.findViewById(R.id.toolbar_title);
+        Typeface lato = Typeface.createFromAsset(this.getApplication().getAssets(), "fonts/Lato-Regular.ttf");
+        mTitle.setTypeface(lato);
 
         //this to set delegate/listener back to this class
         getSessions.delegate = this;
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
                 ListView sessionListView = (ListView) findViewById(R.id.session_list);
                 sessionListView.setAdapter(sessionsAdapter);
+
                 sessionListView.setOnItemClickListener(new OnItemClickListener() {
 
                     @Override
