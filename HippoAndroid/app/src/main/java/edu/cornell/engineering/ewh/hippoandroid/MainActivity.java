@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -83,6 +84,13 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
                 ListView sessionListView = (ListView) findViewById(R.id.session_list);
                 sessionListView.setAdapter(sessionsAdapter);
+
+                sessionsAdapter.sort(new Comparator<CallSession>() {
+                    @Override
+                    public int compare(CallSession s1, CallSession s2) {
+                        return s1.getStartTime().compareTo(s2.getStartTime());
+                    }
+                });
 
                 sessionListView.setOnItemClickListener(new OnItemClickListener() {
 
