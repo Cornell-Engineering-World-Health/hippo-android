@@ -1,10 +1,12 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.StringBuilderPrinter;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +18,10 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
@@ -33,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         TextView mTitle = (TextView) myToolbar.findViewById(R.id.toolbar_title);
-        Typeface lato = Typeface.createFromAsset(this.getApplication().getAssets(), "fonts/Lato-Regular.ttf");
+        Typeface lato = Typeface.createFromAsset(this.getApplication().getAssets(), "fonts/Lato-Bold.ttf");
         mTitle.setTypeface(lato);
 
         //this to set delegate/listener back to this class
@@ -73,11 +79,18 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             }
 
             try {
-                ArrayAdapter<CallSession> sessionsAdapter;
-                sessionsAdapter = new ArrayAdapter<CallSession>(getApplicationContext(), R.layout.session_item, sessions);
+                SessionAdapter<CallSession> sessionsAdapter;
+                sessionsAdapter = new SessionAdapter<CallSession>(getApplicationContext(), R.layout.session_item, sessions);
 
                 ListView sessionListView = (ListView) findViewById(R.id.session_list);
                 sessionListView.setAdapter(sessionsAdapter);
+
+                sessionsAdapter.sort(new Comparator<CallSession>() {
+                    @Override
+                    public int compare(CallSession s1, CallSession s2) {
+                        return s1.getStartTime().compareTo(s2.getStartTime());
+                    }
+                });
 
                 sessionListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -93,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         startActivity(intent);
                     }
                 });
-
             }
             catch(Exception e) {
                 Log.d("processFinish", "Error while creating list view: "+e);
@@ -102,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         } catch(Exception e) {
             Log.d("processFinish", "Error while processing JSON: "+e.getMessage());
         }
-
 
     }
 
