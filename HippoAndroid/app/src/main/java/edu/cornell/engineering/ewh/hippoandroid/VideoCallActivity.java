@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
+import android.util.DisplayMetrics;
 
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
@@ -42,7 +43,8 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private RelativeLayout.LayoutParams subscriberParams;
     private RelativeLayout buttonView;
     private RelativeLayout.LayoutParams buttonParams;
-
+    private int height;
+    private int width;
     AsyncCall getSession = new AsyncCall();
 
     @Override
@@ -52,6 +54,15 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
 
         Intent intent = getIntent();
         String sessionName = intent.getStringExtra(MainActivity.SESSION_NAME);
+
+        /*get screen size*/
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        height = metrics.heightPixels;
+        width = metrics.widthPixels;
+
+        Log.i(LOGTAG, "height : " + height);
+        Log.i(LOGTAG, "width : " + width);
 
         //this to set delegate/listener back to this class
         getSession.delegate = this;
@@ -87,7 +98,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
             publisherView.setLayoutParams(publisherParams);
 
             buttonView = new RelativeLayout(this);
-            buttonParams = new RelativeLayout.LayoutParams(1200,200);
+            buttonParams = new RelativeLayout.LayoutParams(width,(1/6)*height);
             buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             buttonView.setLayoutParams(buttonParams);
@@ -131,7 +142,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 }
             }
         });
-        RelativeLayout.LayoutParams toggleVideoParams = new RelativeLayout.LayoutParams(400,200);
+        RelativeLayout.LayoutParams toggleVideoParams = new RelativeLayout.LayoutParams((1/3)*width,(1/6)*height);
         toggleVideoParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         toggleVideo.setLayoutParams(toggleVideoParams);
         buttonView.addView(toggleVideo);
@@ -152,7 +163,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 }
             }
         });
-        RelativeLayout.LayoutParams toggleAudioParams = new RelativeLayout.LayoutParams(400,200);
+        RelativeLayout.LayoutParams toggleAudioParams = new RelativeLayout.LayoutParams((1/3)*width,(1/6)*height);
         toggleAudioParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         toggleAudio.setLayoutParams(toggleAudioParams);
         buttonView.addView(toggleAudio);
@@ -166,7 +177,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 startActivity(intent);
             }
         });
-        RelativeLayout.LayoutParams endCallParams = new RelativeLayout.LayoutParams(400,200);
+        RelativeLayout.LayoutParams endCallParams = new RelativeLayout.LayoutParams((1/3)*width,(1/6)*height);
         endCallParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         endCall.setLayoutParams(endCallParams);
         buttonView.addView(endCall);
