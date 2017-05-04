@@ -47,6 +47,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private RelativeLayout.LayoutParams subscriberParams;
     private RelativeLayout buttonView;
     private RelativeLayout.LayoutParams buttonParams;
+    private Subscriber subs;
     private int height;
     private int width;
     private int button_height;
@@ -197,6 +198,8 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         endCall.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 publisher.destroy();
+                if(subs != null)
+                    subs.destroy();
                 Intent intent = new Intent(VideoCallActivity.this, MainActivity.class);
                 startActivity(intent);
             }
@@ -212,9 +215,9 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Log.i(LOGTAG, "call to onStreamReceived");
         Subscriber subscriber = new Subscriber(VideoCallActivity.this, stream);
         subscriber.setVideoListener(this);
-        subscriber.setPreferredResolution(new VideoUtils.Size(width,height));
         subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,BaseVideoRenderer.STYLE_VIDEO_FILL);
         session.subscribe(subscriber);
+        subs = subscriber;
         subscriberView.addView(subscriber.getView());
     }
 
