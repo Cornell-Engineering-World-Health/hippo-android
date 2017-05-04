@@ -133,8 +133,6 @@ public class LoginActivity extends AppCompatActivity implements
             GoogleRestClient clientR = new GoogleRestClient();
             clientR.delegate = this;
             clientR.execute(clientId, authCode);
-
-            updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
@@ -251,5 +249,7 @@ public class LoginActivity extends AppCompatActivity implements
         editor.commit();
 
         Log.d(TAG, "Authorization ID Token: " + token);
+
+        updateUI(true);
     }
 }

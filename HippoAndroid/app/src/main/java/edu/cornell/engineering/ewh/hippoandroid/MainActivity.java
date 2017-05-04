@@ -154,6 +154,12 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                     public void onResult(Status status) {
                         // ...
                         Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_SHORT).show();
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("APP", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear();
+                        editor.commit();
+
                         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(i);
                     }
@@ -170,7 +176,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         AsyncResponse del = getSessions.delegate;
         getSessions = new AsyncCall();
         getSessions.delegate = del;
-        getSessions.execute("https://ewh-hippo.herokuapp.com/api/self");
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
+
+        getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
     }
 
     public void processFinish(String output) {
