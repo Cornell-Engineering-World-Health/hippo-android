@@ -59,6 +59,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private Drawable camera;
     private Drawable mute;
     private Drawable unmute;
+    private Drawable endcall;
     AsyncCall getSession = new AsyncCall();
 
     @Override
@@ -152,9 +153,11 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         //publisherView.setLayoutParams(new RelativeLayout.LayoutParams(width,height));
         session.publish(publisher);
         Resources res = getResources();
-        delete =res.getDrawable(android.R.drawable.ic_menu_camera);
-        camera =res.getDrawable(android.R.drawable.ic_menu_delete);
-        unmute = res.getDrawable(android.R.drawable.ic_btn_speak_now);
+        delete =res.getDrawable(R.drawable.ic_videocam_off_black_48dp);
+        camera =res.getDrawable(R.drawable.ic_videocam_black_48dp);
+        unmute = res.getDrawable(R.drawable.ic_mic_off_black_48dp);
+        mute = res.getDrawable(R.drawable.ic_mic_black_48dp);
+        endcall = res.getDrawable(R.drawable.ic_call_end_black_48dp);
 
         final ToggleButton toggleVideo = new ToggleButton(this);
         /*ImageSpan cameraSpan = new ImageSpan(this, android.R.drawable.ic_menu_camera);
@@ -168,7 +171,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         toggleVideo.setTextOn("");
         toggleVideo.setText("");
         toggleVideo.setChecked(true);
-        toggleVideo.setBackgroundDrawable(delete);
+        toggleVideo.setBackgroundDrawable(camera);
 
 
         //toggleVideo.setText(blockString);
@@ -181,12 +184,12 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 if(isChecked) {
                     Log.i(LOGTAG, "PUBLISHING");
                     publisher.setPublishVideo(true);
-                    toggleVideo.setBackgroundDrawable(delete);
+                    toggleVideo.setBackgroundDrawable(camera);
                 }
                 else {
                     Log.i(LOGTAG, "UNPUBLISHING");
                     publisher.setPublishVideo(false);
-                    toggleVideo.setBackgroundDrawable(camera);
+                    toggleVideo.setBackgroundDrawable(delete);
                 }
             }
         });
@@ -195,20 +198,22 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         toggleVideo.setLayoutParams(toggleVideoParams);
         buttonView.addView(toggleVideo);
 
-        ToggleButton toggleAudio = new ToggleButton(this);
+        final ToggleButton toggleAudio = new ToggleButton(this);
         toggleAudio.setChecked(true);
-        toggleAudio.setText("Mute");
-        toggleAudio.setTextOn("Mute");
-        toggleAudio.setTextOff("Unmute");
-        toggleAudio.setButtonDrawable(res.getDrawable(android.R.drawable.ic_btn_speak_now));
+        toggleAudio.setText("");
+        toggleAudio.setTextOn("");
+        toggleAudio.setTextOff("");
+        toggleAudio.setBackgroundDrawable(mute);
         toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
                     publisher.setPublishAudio(true);
+                    toggleAudio.setBackgroundDrawable(mute);
                 }
                 else {
                     publisher.setPublishAudio(false);
+                    toggleAudio.setBackgroundDrawable(unmute);
                 }
             }
         });
@@ -219,7 +224,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
 
         Button endCall = new Button(this);
         //endCall.setText("End Call");
-        endCall.setBackground(res.getDrawable(android.R.drawable.ic_menu_call));
+        endCall.setBackgroundDrawable(endcall);
         endCall.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 publisher.destroy();
