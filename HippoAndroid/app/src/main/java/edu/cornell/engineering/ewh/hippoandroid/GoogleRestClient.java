@@ -6,15 +6,19 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -23,17 +27,19 @@ import javax.net.ssl.HttpsURLConnection;
  */
 
 public class GoogleRestClient extends AsyncTask<String, Void, String> {
+    public AsyncResponse delegate = null;
 
     @Override
     protected String doInBackground(String[] params) {
         StringBuffer response = new StringBuffer();
-
         try {
             String url = "https://ewh-hippo.herokuapp.com/auth/google";
+//            String url = "http://10.0.2.2:3000/auth/google";
             URL obj = new URL(url);
-            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+//            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestProperty("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
-            con.setDoOutput(false);
+//            con.setDoOutput(false);
 
             //add request header
             con.setRequestMethod("POST");
@@ -44,20 +50,30 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
             String urlParameters = "code="+authCode+"&redirectUri=http://localhost:8080&clientId=" + clientId;
 
             // Send post request
-//            con.setDoOutput(true);// Should be part of code only for .Net web-services else no need for PHP
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(urlParameters);
+            con.setDoOutput(true);// Should be part of code only for .Net web-services else no need for PHP
+            OutputStream wr = con.getOutputStream();
+            wr.write(urlParameters.getBytes("UTF-8"));
             wr.flush();
             wr.close();
 
             int responseCode = con.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Post parameters : " + urlParameters);
-            System.out.println("Response Code : " + responseCode);
+            BufferedReader in;
+            if (responseCode > 400) {
+                con.getErrorStream();
+                in = new BufferedReader(
+                        new InputStreamReader(con.getErrorStream()));
+                System.out.println("error");
+            }
+            else {
+                System.out.println("\nSending 'POST' request to URL : " + url);
+                System.out.println("Post parameters : " + urlParameters);
+                System.out.println("Response Code : " + responseCode);
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
+                in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+            }
             String inputLine;
+
 
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
@@ -80,7 +96,13 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String message) {
-        //process message
-        System.out.println("onPostExecute: Got message!");
+        try {
+            //process message
+            JSONObject jsonMessage = new JSONObject(message);
+            String token = " Bearer " + jsonMessage.getString("token");
+            delegate.processFinish(token);
+        } catch(JSONException je) {
+            System.out.println("FAILED TO PARSE MESSAGE FROM SERVER");
+        }
     }
 }

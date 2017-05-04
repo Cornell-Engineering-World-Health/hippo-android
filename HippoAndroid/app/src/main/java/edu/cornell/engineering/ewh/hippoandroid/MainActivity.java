@@ -1,12 +1,15 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.StringBuilderPrinter;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.view.View;
@@ -15,6 +18,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.util.Log;
 import android.widget.ListView;
 import android.content.Intent;
+import android.widget.Toast;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 import android.widget.TextView;
 import android.os.Handler;
@@ -42,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             refresh();
         }
     };
+
+    public GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,32 +86,81 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         //this to set delegate/listener back to this class
         getSessions.delegate = this;
 
-        //execute the async task
-        getSessions.execute("https://ewh-hippo.herokuapp.com/api/self");
+        SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
 
+        //execute the async task
+        getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
+      
         mainActivityActive = true; //true if user is on mainActivity.
-        //new thread runs only while mainActivityActive == true
-        Runnable r = new Runnable(){
-            @Override
-            public void run() {
-                while(mainActivityActive){
-                    synchronized (this){
-                        try{
-                            wait(60000);
-                            handler.sendEmptyMessage(0);
-                        } catch (Exception e){
-                            Log.d("Main: ", "Error in refresh thread: " + e);
-                        }
-                    }
-                }
-            }
-        };
-        Thread refresh = new Thread(r);
-        refresh.start();
+          //new thread runs only while mainActivityActive == true
+          Runnable r = new Runnable(){
+              @Override
+              public void run() {
+                  while(mainActivityActive){
+                      synchronized (this){
+                          try{
+                              wait(60000);
+                              handler.sendEmptyMessage(0);
+                          } catch (Exception e){
+                              Log.d("Main: ", "Error in refresh thread: " + e);
+                          }
+                      }
+                  }
+              }
+          };
+          Thread refresh = new Thread(r);
+          refresh.start();
     }
 
     @Override
+    protected void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // User chose the "Settings" item, show the app settings UI...
+                signOut();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        // ...
+                        Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(i);
+                    }
+                });
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mainActivityActive = false;

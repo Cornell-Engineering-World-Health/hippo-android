@@ -19,6 +19,9 @@
     <string name="request_id_token">"789185821228-jkliab3iscephfdr47h9184kn1bh2t1j.apps.googleusercontent.com"
     </string>
 
+    <string name="request_id_token_lillyan">"789185821228-2ubb1dteh8tbvc72t0td9om4su1eg5eg.apps.googleusercontent.com"
+    </string>
+
     <string name="title_text">hippo</string>
 
     <string name="loading">Loading…</string>

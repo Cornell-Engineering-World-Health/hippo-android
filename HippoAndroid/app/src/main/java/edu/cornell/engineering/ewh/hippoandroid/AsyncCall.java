@@ -28,9 +28,10 @@ public class AsyncCall extends AsyncTask<String, Void, String> {
 
         try {
             URL obj = new URL(params[0]);
+            String token = params[1];
             HttpURLConnection httpConnection = (HttpURLConnection) obj.openConnection();
             httpConnection.setRequestMethod("GET");
-            httpConnection.setRequestProperty("Authorization", " Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OGQ2ZmUyODFmY2RlZjAwMTFmNTU0ZjQiLCJpYXQiOjE0OTI5ODI4MTIsImV4cCI6MTQ5NDE5MjQxMn0.3scDrs3eVW53V_zboesXb2tgiyDmlvw98I8TVFgeQaY");
+            httpConnection.setRequestProperty("Authorization", token);
             int responseCode = httpConnection.getResponseCode();
             Log.i("getMyCalls:", ""+responseCode);
             if (responseCode == 200) {

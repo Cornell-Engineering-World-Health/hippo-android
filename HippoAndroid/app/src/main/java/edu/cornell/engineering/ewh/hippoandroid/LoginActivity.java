@@ -34,17 +34,15 @@ public class LoginActivity extends AppCompatActivity implements
     private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    private GoogleApiClient mGoogleApiClient;
-//    private TextView mStatusTextView;
+    public GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("printTag", "IN CREATE");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Views
+            // Views
 //        mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Button listeners
@@ -133,9 +131,9 @@ public class LoginActivity extends AppCompatActivity implements
             AsyncHttpClient client = new AsyncHttpClient();
             String rel_url = "auth/google/";
             GoogleRestClient clientR = new GoogleRestClient();
+            clientR.delegate = this;
             clientR.execute(clientId, authCode);
 
-//            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
@@ -229,7 +227,6 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-
     public static void setGooglePlusTextAllCaps(SignInButton signInButton, boolean allCaps)
     {
         for (int i = 0; i < signInButton.getChildCount(); i++)
@@ -246,13 +243,13 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void processFinish(String response) {
+    public void processFinish(String token) {
         // Save Token
         SharedPreferences sharedPreferences = getSharedPreferences("APP", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("G_TOKEN", response);
+        editor.putString("Authorization", token);
         editor.commit();
 
-        Log.d(TAG, "ID Token: " + response);
+        Log.d(TAG, "Authorization ID Token: " + token);
     }
 }
