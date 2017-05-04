@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -16,6 +17,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -24,6 +27,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 
 public class GoogleRestClient extends AsyncTask<String, Void, String> {
+    public AsyncResponse delegate = null;
 
     @Override
     protected String doInBackground(String[] params) {
@@ -92,7 +96,13 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String message) {
-        //process message
-        System.out.println("onPostExecute: Got message!");
+        try {
+            //process message
+            JSONObject jsonMessage = new JSONObject(message);
+            String token = " Bearer " + jsonMessage.getString("token");
+            delegate.processFinish(token);
+        } catch(JSONException je) {
+            System.out.println("FAILED TO PARSE MESSAGE FROM SERVER");
+        }
     }
 }

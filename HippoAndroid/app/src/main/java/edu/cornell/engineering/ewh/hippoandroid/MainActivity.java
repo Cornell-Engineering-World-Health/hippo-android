@@ -1,5 +1,7 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -43,8 +45,13 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         //this to set delegate/listener back to this class
         getSessions.delegate = this;
 
+        System.out.println("G_TOKEN");
+        SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
+        System.out.println(token);
+
         //execute the async task
-        getSessions.execute("https://ewh-hippo.herokuapp.com/api/self");
+        getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
     }
 
     @Override

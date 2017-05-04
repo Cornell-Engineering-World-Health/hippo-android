@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity implements
             AsyncHttpClient client = new AsyncHttpClient();
             String rel_url = "auth/google/";
             GoogleRestClient clientR = new GoogleRestClient();
-
+            clientR.delegate = this;
             clientR.execute(clientId, authCode);
 
             updateUI(true);
@@ -243,16 +243,13 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void processFinish(String response) {
+    public void processFinish(String token) {
         // Save Token
         SharedPreferences sharedPreferences = getSharedPreferences("APP", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("G_TOKEN", response);
+        editor.putString("Authorization", token);
         editor.commit();
 
-//        LoginActivity loginAct = (LoginActivity)getApplicationContext();
-//        loginAct.mGoogleApiClient = mGoogleApiClient;
-
-        Log.d(TAG, "ID Token: " + response);
+        Log.d(TAG, "Authorization ID Token: " + token);
     }
 }
