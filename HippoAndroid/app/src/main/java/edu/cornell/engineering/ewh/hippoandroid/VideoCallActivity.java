@@ -1,6 +1,8 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
@@ -86,8 +88,12 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         //this to set delegate/listener back to this class
         getSession.delegate = this;
 
+        SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
+
         //execute the async task
-        getSession.execute("https://ewh-hippo.herokuapp.com/api/videos/" + sessionName);
+        getSession.execute("https://ewh-hippo.herokuapp.com/api/videos/" + sessionName, token);
+
     }
 
     public void processFinish(String output) {
