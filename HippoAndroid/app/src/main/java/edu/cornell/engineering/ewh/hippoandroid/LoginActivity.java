@@ -250,9 +250,6 @@ public class LoginActivity extends AppCompatActivity implements
         editor.putString("G_TOKEN", response);
         editor.commit();
 
-//        LoginActivity loginAct = (LoginActivity)getApplicationContext();
-//        loginAct.mGoogleApiClient = mGoogleApiClient;
-
         Log.d(TAG, "ID Token: " + response);
     }
 }
