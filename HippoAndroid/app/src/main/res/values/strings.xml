@@ -31,6 +31,4 @@
 
     <string name="disconnect">Disconnect</string>
     <string name="title_activity_test_redirect">testRedirect</string>
-
-    <string name="session_list_title">Session List</string>
 </resources>
