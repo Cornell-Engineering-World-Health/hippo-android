@@ -1,6 +1,8 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
 import com.loopj.android.http.*;
+
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -22,28 +24,9 @@ import javax.net.ssl.HttpsURLConnection;
  */
 
 public class GoogleRestClient extends AsyncTask<String, Void, String> {
-//    private static final String BASE_URL = "https://ewh-hippo.herokuapp.com/";
-//    private static AsyncHttpClient client = new AsyncHttpClient();
-//
-//    public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-//        client.get(getAbsoluteUrl(url), params, responseHandler);
-//    }
-//
-//    public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-//        client.post(getAbsoluteUrl(url), params, responseHandler);
-//    }
-//
-//    private static String getAbsoluteUrl(String relativeUrl) {
-//        return BASE_URL + relativeUrl;
-//    }
-    private Exception exception;
-    public String authCode = "";
 
     @Override
     protected String doInBackground(String[] params) {
-        // GET all of user's sessions
-
-
         StringBuffer response = new StringBuffer();
         try {
             String url = "https://ewh-hippo.herokuapp.com/auth/google";
@@ -54,12 +37,13 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
             con.setRequestProperty("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
 //            con.setDoOutput(false);
 
-            //add reuqest header
+            //add request header
             con.setRequestMethod("POST");
-//            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
             //Request Parameters you want to send
-            String urlParameters = "code="+authCode+"&redirectUri=http://localhost:8080&clientId=707301966243-kbftfe8f7hb0hqv6eu7pkgg02gfhbhlc.apps.googleusercontent.com";
+            String clientId = params[0];
+            String authCode = params[1];
+            String urlParameters = "code="+authCode+"&redirectUri=http://localhost:8080&clientId=" + clientId;
 
             // Send post request
             con.setDoOutput(true);// Should be part of code only for .Net web-services else no need for PHP
@@ -110,6 +94,5 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String message) {
         //process message
         System.out.println("onPostExecute: Got message!");
-
     }
 }
