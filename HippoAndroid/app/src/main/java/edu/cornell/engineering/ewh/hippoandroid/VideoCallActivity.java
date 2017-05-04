@@ -1,6 +1,8 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +17,9 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
+import android.util.DisplayMetrics;
 
+import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
@@ -23,6 +27,7 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import com.opentok.android.OpentokError;
+import com.opentok.android.VideoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +47,11 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private RelativeLayout.LayoutParams subscriberParams;
     private RelativeLayout buttonView;
     private RelativeLayout.LayoutParams buttonParams;
-
+    private Subscriber subs;
+    private int height;
+    private int width;
+    private int button_height;
+    private int button_width;
     AsyncCall getSession = new AsyncCall();
 
     @Override
@@ -50,8 +59,29 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Log.i(LOGTAG, "call to onCreate");
         super.onCreate(savedInstanceState);
 
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
         Intent intent = getIntent();
         String sessionName = intent.getStringExtra(MainActivity.SESSION_NAME);
+
+        /*get screen size*/
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        height = metrics.heightPixels;
+        width = metrics.widthPixels;
+        button_height = (int) height/7;//0.167 * height;
+        button_width = (int) width/3;//0.333 * width;
+
+        Log.i(LOGTAG, "height : " + height);
+        Log.i(LOGTAG, "width : " + width);
+        Log.i(LOGTAG, "button_height : " + button_height);
+        Log.i(LOGTAG, "button_width : " + button_width);
 
         //this to set delegate/listener back to this class
         getSession.delegate = this;
@@ -87,7 +117,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
             publisherView.setLayoutParams(publisherParams);
 
             buttonView = new RelativeLayout(this);
-            buttonParams = new RelativeLayout.LayoutParams(1200,200);
+            buttonParams = new RelativeLayout.LayoutParams(width,button_height);
             buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             buttonView.setLayoutParams(buttonParams);
@@ -110,12 +140,16 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Log.i(LOGTAG, "call to onConnected of the SessionListener");
         final Publisher publisher = new Publisher(VideoCallActivity.this);
         publisher.setPublisherListener(this);
+        publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,BaseVideoRenderer.STYLE_VIDEO_FILL);
         publisherView.addView(publisher.getView());
+        //publisherView.setLayoutParams(new RelativeLayout.LayoutParams(width,height));
         session.publish(publisher);
+        Resources res = getResources();
 
         ToggleButton toggleVideo = new ToggleButton(this);
         toggleVideo.setChecked(true);
         toggleVideo.setText("Video Off");
+        toggleVideo.setButtonDrawable(res.getDrawable(android.R.drawable.ic_menu_camera));
         toggleVideo.setTextOn("Video Off");
         toggleVideo.setTextOff("Video On");
         toggleVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -131,7 +165,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 }
             }
         });
-        RelativeLayout.LayoutParams toggleVideoParams = new RelativeLayout.LayoutParams(400,200);
+        RelativeLayout.LayoutParams toggleVideoParams = new RelativeLayout.LayoutParams(button_width,button_height);
         toggleVideoParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         toggleVideo.setLayoutParams(toggleVideoParams);
         buttonView.addView(toggleVideo);
@@ -141,6 +175,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         toggleAudio.setText("Mute");
         toggleAudio.setTextOn("Mute");
         toggleAudio.setTextOff("Unmute");
+        toggleAudio.setButtonDrawable(res.getDrawable(android.R.drawable.ic_btn_speak_now));
         toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -152,21 +187,24 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
                 }
             }
         });
-        RelativeLayout.LayoutParams toggleAudioParams = new RelativeLayout.LayoutParams(400,200);
+        RelativeLayout.LayoutParams toggleAudioParams = new RelativeLayout.LayoutParams(button_width,button_height);
         toggleAudioParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         toggleAudio.setLayoutParams(toggleAudioParams);
         buttonView.addView(toggleAudio);
 
         Button endCall = new Button(this);
-        endCall.setText("End Call");
+        //endCall.setText("End Call");
+        endCall.setBackground(res.getDrawable(android.R.drawable.ic_menu_call));
         endCall.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 publisher.destroy();
+                if(subs != null)
+                    subs.destroy();
                 Intent intent = new Intent(VideoCallActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
-        RelativeLayout.LayoutParams endCallParams = new RelativeLayout.LayoutParams(400,200);
+        RelativeLayout.LayoutParams endCallParams = new RelativeLayout.LayoutParams(button_width,button_height);
         endCallParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         endCall.setLayoutParams(endCallParams);
         buttonView.addView(endCall);
@@ -177,7 +215,9 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Log.i(LOGTAG, "call to onStreamReceived");
         Subscriber subscriber = new Subscriber(VideoCallActivity.this, stream);
         subscriber.setVideoListener(this);
+        subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,BaseVideoRenderer.STYLE_VIDEO_FILL);
         session.subscribe(subscriber);
+        subs = subscriber;
         subscriberView.addView(subscriber.getView());
     }
 
