@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             JSONArray calls = jsonObject.getJSONArray("calls");
             int myUserId = jsonObject.getInt("userId");
 
-            final List<CallSession> sessions = new ArrayList<>();
+            final CallSession[] sessions = new CallSession[calls.length()];
 
             for(int i = 0; i<calls.length();i++){
                 JSONObject call = calls.getJSONObject(i);
@@ -129,9 +129,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         }
                     }
 
-                    sessions.add(new CallSession(call.getString("endTime"), call.getString("startTime"),
+                    sessions[i] = new CallSession(call.getString("endTime"), call.getString("startTime"),
                             call.getString("datetime"), call.getString("sessionId"), call.getString("name"),
-                            call.getBoolean("active"), users));
+                            call.getBoolean("active"), users);
                 }
             }
 
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                                             int position,
                                             long id) {
                         // Get clicked Session.
-                        CallSession call = sessions.get(position);
+                        CallSession call = sessions[position];
                         Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
                         intent.putExtra(SESSION_NAME, call.getName());
                         startActivity(intent);
