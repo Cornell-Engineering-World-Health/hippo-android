@@ -56,6 +56,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private Subscriber subs;
     private int height;
     private int width;
+    private int buttonViewWidth;
     private int button_height;
     private int button_width;
     private Drawable delete;
@@ -86,8 +87,10 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         height = metrics.heightPixels;
         width = metrics.widthPixels;
-        button_height = (int) height/7;//0.167 * height;
-        button_width = (int) width/3;//0.333 * width;
+        buttonViewWidth = (int) (width*.75);
+
+        button_height = (int) height/8;//0.167 * height;
+        button_width = (int) width/5;//0.333 * width;
 
         Log.i(LOGTAG, "height : " + height);
         Log.i(LOGTAG, "width : " + width);
@@ -132,7 +135,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
             publisherView.setLayoutParams(publisherParams);
 
             buttonView = new RelativeLayout(this);
-            buttonParams = new RelativeLayout.LayoutParams(width,button_height);
+            buttonParams = new RelativeLayout.LayoutParams(buttonViewWidth,button_height);
             buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             buttonView.setLayoutParams(buttonParams);
