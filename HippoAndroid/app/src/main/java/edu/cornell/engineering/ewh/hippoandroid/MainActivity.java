@@ -45,10 +45,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         //this to set delegate/listener back to this class
         getSessions.delegate = this;
 
-        System.out.println("G_TOKEN");
         SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
-        System.out.println(token);
 
         //execute the async task
         getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
