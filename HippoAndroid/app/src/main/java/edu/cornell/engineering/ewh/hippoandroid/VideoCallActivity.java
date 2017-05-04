@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +19,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 import android.util.DisplayMetrics;
+import android.text.style.ImageSpan;
+import 	android.text.SpannableString;
+
 
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.Publisher;
@@ -51,6 +55,10 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private int width;
     private int button_height;
     private int button_width;
+    private Drawable delete;
+    private Drawable camera;
+    private Drawable mute;
+    private Drawable unmute;
     AsyncCall getSession = new AsyncCall();
 
     @Override
@@ -144,23 +152,41 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         //publisherView.setLayoutParams(new RelativeLayout.LayoutParams(width,height));
         session.publish(publisher);
         Resources res = getResources();
+        delete =res.getDrawable(android.R.drawable.ic_menu_camera);
+        camera =res.getDrawable(android.R.drawable.ic_menu_delete);
+        unmute = res.getDrawable(android.R.drawable.ic_btn_speak_now);
 
-        ToggleButton toggleVideo = new ToggleButton(this);
+        final ToggleButton toggleVideo = new ToggleButton(this);
+        /*ImageSpan cameraSpan = new ImageSpan(this, android.R.drawable.ic_menu_camera);
+        ImageSpan blockSpan = new ImageSpan(this, android.R.drawable.ic_menu_delete);//ic_menu_block
+        SpannableString cameraString = new SpannableString("X");
+        cameraString.setSpan(cameraSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString blockString = new SpannableString("X");
+        cameraString.setSpan(blockSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); */
+
+        toggleVideo.setTextOff("");
+        toggleVideo.setTextOn("");
+        toggleVideo.setText("");
         toggleVideo.setChecked(true);
-        toggleVideo.setText("Video Off");
-        toggleVideo.setButtonDrawable(res.getDrawable(android.R.drawable.ic_menu_camera));
-        toggleVideo.setTextOn("Video Off");
-        toggleVideo.setTextOff("Video On");
+        toggleVideo.setBackgroundDrawable(delete);
+
+
+        //toggleVideo.setText(blockString);
+       // toggleVideo.setButtonDrawable(res.getDrawable(android.R.drawable.ic_menu_camera));
+        //toggleVideo.setTextOn(cameraString);
+        //toggleVideo.setTextOff(blockString);
         toggleVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
                     Log.i(LOGTAG, "PUBLISHING");
                     publisher.setPublishVideo(true);
+                    toggleVideo.setBackgroundDrawable(delete);
                 }
                 else {
                     Log.i(LOGTAG, "UNPUBLISHING");
                     publisher.setPublishVideo(false);
+                    toggleVideo.setBackgroundDrawable(camera);
                 }
             }
         });
