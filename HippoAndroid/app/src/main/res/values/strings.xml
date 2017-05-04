@@ -1,4 +1,6 @@
 <resources>
+
+    <string name="session_list_title">Upcoming Sessions</string>
     <string name="app_name">Hippo</string>
     <string name="title_activity_login">Sign in</string>
 
@@ -32,6 +34,4 @@
 
     <string name="disconnect">Disconnect</string>
     <string name="title_activity_test_redirect">testRedirect</string>
-
-    <string name="session_list_title">Session List</string>
 </resources>
