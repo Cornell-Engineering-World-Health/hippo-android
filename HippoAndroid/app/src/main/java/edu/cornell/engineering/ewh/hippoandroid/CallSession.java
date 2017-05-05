@@ -45,10 +45,11 @@ public class CallSession {
 
     private String reformatDate(String date){
         int hour = Integer.valueOf(date.substring(11,13));
+        System.out.println(hour);
         if(hour < 12)
-            return date.substring(0,10) + ", " + date.substring(11, 19)+ " AM";
+            return date.substring(0,10) + ", " + date.substring(11, 16)+ " AM";
         else
-            return date.substring(0,10) + ", " + (hour-12) + date.substring(13,19) + " PM";
+            return date.substring(0,10) + ", " + (hour-12) + date.substring(13,16) + " PM";
     }
 
     public String toString(){
