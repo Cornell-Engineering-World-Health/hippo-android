@@ -34,11 +34,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
@@ -183,6 +186,25 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
     }
 
+    /**
+     * convert date from UTC to local time.
+     */
+    public String convertDate(String date){
+        try
+        {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(date);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormatter.setTimeZone(TimeZone.getDefault());
+            date = dateFormatter.format(value);
+        } catch (Exception e) {
+            date = "0000-00-00 00:00:00";
+        }
+        return date;
+    }
+
     public void processFinish(String output) {
 
         try{
@@ -209,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         }
                     }
 
-                    sessions[i] = new CallSession(call.getString("endTime"), call.getString("startTime"),
-                            call.getString("datetime"), call.getString("sessionId"), call.getString("name"),
+                    sessions[i] = new CallSession(convertDate(call.getString("endTime")), convertDate(call.getString("startTime")),
+                            convertDate(call.getString("datetime")), call.getString("sessionId"), call.getString("name"),
                             call.getBoolean("active"), users);
                 }
             }
