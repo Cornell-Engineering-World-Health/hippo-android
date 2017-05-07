@@ -34,11 +34,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     public boolean mainActivityActive;
     AsyncCall getSessions;
 
+    //handler changes session list view in main thread.
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -171,8 +175,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         super.onPause();
         mainActivityActive = false;
     }
+
+    /**
+     * Refreshes the Session List by making a GET request
+     */
     public void refresh(){
-        System.out.println("Refresh");
         AsyncResponse del = getSessions.delegate;
         getSessions = new AsyncCall();
         getSessions.delegate = del;
@@ -181,6 +188,25 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
 
         getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
+    }
+
+    /**
+     * convert date from UTC to local time.
+     */
+    public String convertDate(String date){
+        try
+        {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date value = formatter.parse(date);
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormatter.setTimeZone(TimeZone.getDefault());
+            date = dateFormatter.format(value);
+        } catch (Exception e) {
+            date = "0000-00-00 00:00:00";
+        }
+        return date;
     }
 
     public void processFinish(String output) {
@@ -209,8 +235,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         }
                     }
 
-                    sessions[i] = new CallSession(call.getString("endTime"), call.getString("startTime"),
-                            call.getString("datetime"), call.getString("sessionId"), call.getString("name"),
+                    sessions[i] = new CallSession(convertDate(call.getString("endTime")), convertDate(call.getString("startTime")),
+                            convertDate(call.getString("datetime")), call.getString("sessionId"), call.getString("name"),
                             call.getBoolean("active"), users);
                 }
             }

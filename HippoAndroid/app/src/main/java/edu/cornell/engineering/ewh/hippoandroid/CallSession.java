@@ -1,10 +1,8 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
 /**
- * Created by Albert on 4/27/2017.
+ *  CallSession class stores information about a session.
  */
-
-
 public class CallSession {
     private String endTime, startTime, dateTime, sessionId, name;
     private boolean active;
@@ -45,7 +43,6 @@ public class CallSession {
 
     private String reformatDate(String date){
         int hour = Integer.valueOf(date.substring(11,13));
-        System.out.println(hour);
         if(hour < 12)
             return date.substring(0,10) + ", " + date.substring(11, 16)+ " AM";
         else
