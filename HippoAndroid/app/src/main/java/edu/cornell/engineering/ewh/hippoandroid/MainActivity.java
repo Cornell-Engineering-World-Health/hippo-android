@@ -83,17 +83,17 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         Typeface lato = Typeface.createFromAsset(this.getApplication().getAssets(), "fonts/Lato-Bold.ttf");
         mTitle.setTypeface(lato);
 
-        //this to set delegate/listener back to this class
+        // Set delegate/listener back to this class
         getSessions.delegate = this;
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
 
-        //execute the async task
+        // Execute the /self call as an async task.
         getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
       
-        mainActivityActive = true; //true if user is on mainActivity.
-          //new thread runs only while mainActivityActive == true
+        mainActivityActive = true; // true if user is on mainActivity.
+          // new thread runs only while mainActivityActive == true
           Runnable r = new Runnable(){
               @Override
               public void run() {
@@ -222,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                 ListView sessionListView = (ListView) findViewById(R.id.session_list);
                 sessionListView.setAdapter(sessionsAdapter);
 
+                // Sort sessions list by start time.
                 sessionsAdapter.sort(new Comparator<CallSession>() {
                     @Override
                     public int compare(CallSession s1, CallSession s2) {
