@@ -14,6 +14,7 @@ import java.net.URL;
 
 /**
  * Created by erinchen on 4/26/17.
+ * AsyncCall implements AsyncTask to make all http calls.
  */
 
 public class AsyncCall extends AsyncTask<String, Void, String> {
@@ -21,8 +22,6 @@ public class AsyncCall extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String[] params) {
-        // GET all of user's sessions
-        Log.i("getMyCalls:", "[doInBackground] params = "+params[0]);
 
         StringBuffer response = new StringBuffer();
 
@@ -35,7 +34,6 @@ public class AsyncCall extends AsyncTask<String, Void, String> {
             int responseCode = httpConnection.getResponseCode();
             Log.i("getMyCalls:", ""+responseCode);
             if (responseCode == 200) {
-                Log.i("getMyCalls", "[doInBackground] response code = "+responseCode);
 
                 BufferedReader responseReader = new BufferedReader(new InputStreamReader(
                         httpConnection.getInputStream()));
@@ -46,8 +44,6 @@ public class AsyncCall extends AsyncTask<String, Void, String> {
                     response.append(responseLine+"\n");
                 }
                 responseReader.close();
-                // print result
-                Log.i("allSessions: ", response.toString());
             }
         }
         catch (MalformedURLException e) {
@@ -60,9 +56,11 @@ public class AsyncCall extends AsyncTask<String, Void, String> {
 
     }
 
+    /*
+    * Calls processFinish of implementing class to process call output.
+    */
     @Override
     protected void onPostExecute(String message) {
-        //process message
         System.out.println("onPostExecute: Got message!");
         delegate.processFinish(message);
     }

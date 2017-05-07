@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Created by erinchen on 5/2/17.
+ * SessionAdapter customizes ArrayAdapter to set a custom style on the session list.
  */
 
 public class SessionAdapter<CallSession> extends ArrayAdapter<CallSession> {
