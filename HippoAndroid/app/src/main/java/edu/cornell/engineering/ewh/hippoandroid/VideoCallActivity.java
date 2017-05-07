@@ -38,13 +38,16 @@ import com.opentok.android.VideoUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/*
+Video call view - displays a single call
+ */
 public class VideoCallActivity extends AppCompatActivity implements Session.SessionListener,
         Publisher.PublisherListener, Subscriber.SubscriberListener,
         Subscriber.VideoListener, AsyncResponse {
 
     public static final String API_KEY = "45817732";
-    public static String SESSION_ID; //= "2_MX40NTgxNzczMn5-MTQ5MzE0MzA3NDI4Nn5Xa3J4U2lCRnZxcVN5bUJxM0tQWlpuY0h-UH4";
-    public static String TOKEN; //= "T1==cGFydG5lcl9pZD00NTgxNzczMiZzaWc9YzNkZDBhZjdkNTcyMDc3MTRiODZlMzg4ZjA3NzY4Y2YzYmM1NDliNTpzZXNzaW9uX2lkPTJfTVg0ME5UZ3hOemN6TW41LU1UUTVNekUwTXpBM05ESTRObjVYYTNKNFUybENSblp4Y1ZONWJVSnhNMHRRV2xwdVkwaC1VSDQmY3JlYXRlX3RpbWU9MTQ5MzU4NTczNCZub25jZT0wLjgyODUwNTMxMzc3MjExMTcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTQ5MzY3MjEzNA==";
+    public static String SESSION_ID;
+    public static String TOKEN;
     public static final String LOGTAG = "VideoCallActivity";
 
     private RelativeLayout publisherView;
@@ -66,6 +69,10 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     private Drawable endcall;
     AsyncCall getSession = new AsyncCall();
 
+    /*
+    Sets up the screen size values and makes the API call for
+    that session
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(LOGTAG, "call to onCreate");
@@ -89,8 +96,9 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         width = metrics.widthPixels;
         buttonViewWidth = (int) (width*.75);
 
-        button_height = (int) height/8;//0.167 * height;
-        button_width = (int) width/5;//0.333 * width;
+        /*height and width of the end call, audio toggle, and video toggle buttons*/
+        button_height = (int) height/8;
+        button_width = (int) width/5;
 
         Log.i(LOGTAG, "height : " + height);
         Log.i(LOGTAG, "width : " + width);
@@ -100,6 +108,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         //this to set delegate/listener back to this class
         getSession.delegate = this;
 
+        /*API call to get the session*/
         SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
 
@@ -108,19 +117,25 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
 
     }
 
+    /*
+    Called when the API call has been made
+     */
     public void processFinish(String output) {
 
         try{
+            // data returned from the server
             JSONObject jsonObject = new JSONObject(output);
             SESSION_ID = jsonObject.getString("sessionId");
             TOKEN = jsonObject.getString("tokenId");
 
+            // create the layout views
             RelativeLayout parentLayout = new RelativeLayout(this);
             RelativeLayout.LayoutParams parentParams = new RelativeLayout.LayoutParams
                     (RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
             parentLayout.setLayoutParams(parentParams);
             setContentView(parentLayout);
 
+            // view for the other person's video
             subscriberView = new RelativeLayout(this);
             subscriberParams = new RelativeLayout.LayoutParams
                     (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -128,22 +143,26 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
             subscriberParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             subscriberView.setLayoutParams(subscriberParams);
 
+            // view for your video
             publisherView = new RelativeLayout(this);
             publisherParams = new RelativeLayout.LayoutParams(240,320);
             publisherParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
             publisherParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             publisherView.setLayoutParams(publisherParams);
 
+            // view for the buttons
             buttonView = new RelativeLayout(this);
             buttonParams = new RelativeLayout.LayoutParams(buttonViewWidth,button_height);
             buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             buttonView.setLayoutParams(buttonParams);
 
+            // adding the views to the screen
             parentLayout.addView(subscriberView);
             parentLayout.addView(publisherView);
             parentLayout.addView(buttonView);
 
+            // connect to the session with the ID and TOKEN returned from the API call
             final Session session = new Session(VideoCallActivity.this, API_KEY, SESSION_ID);
             session.setSessionListener(this);
             session.connect(TOKEN);
@@ -153,41 +172,35 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         }
     }
 
+    /*
+    Called when you successfully connect to an OpenTOK session
+     */
     @Override
     public void onConnected(final Session session) {
         Log.i(LOGTAG, "call to onConnected of the SessionListener");
+
+        // add your video stream to the view
         final Publisher publisher = new Publisher(VideoCallActivity.this);
         publisher.setPublisherListener(this);
         publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,BaseVideoRenderer.STYLE_VIDEO_FILL);
         publisherView.addView(publisher.getView());
-        //publisherView.setLayoutParams(new RelativeLayout.LayoutParams(width,height));
         session.publish(publisher);
         Resources res = getResources();
+
+        // add logos to the buttons
         delete =res.getDrawable(R.drawable.ic_videocam_off_black_48dp);
         camera =res.getDrawable(R.drawable.ic_videocam_black_48dp);
         unmute = res.getDrawable(R.drawable.ic_mic_off_black_48dp);
         mute = res.getDrawable(R.drawable.ic_mic_black_48dp);
         endcall = res.getDrawable(R.drawable.ic_call_end_black_48dp);
 
+        // set up the video toggle button
         final ToggleButton toggleVideo = new ToggleButton(this);
-        /*ImageSpan cameraSpan = new ImageSpan(this, android.R.drawable.ic_menu_camera);
-        ImageSpan blockSpan = new ImageSpan(this, android.R.drawable.ic_menu_delete);//ic_menu_block
-        SpannableString cameraString = new SpannableString("X");
-        cameraString.setSpan(cameraSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableString blockString = new SpannableString("X");
-        cameraString.setSpan(blockSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); */
-
         toggleVideo.setTextOff("");
         toggleVideo.setTextOn("");
         toggleVideo.setText("");
         toggleVideo.setChecked(true);
         toggleVideo.setBackgroundDrawable(camera);
-
-
-        //toggleVideo.setText(blockString);
-       // toggleVideo.setButtonDrawable(res.getDrawable(android.R.drawable.ic_menu_camera));
-        //toggleVideo.setTextOn(cameraString);
-        //toggleVideo.setTextOff(blockString);
         toggleVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -208,6 +221,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         toggleVideo.setLayoutParams(toggleVideoParams);
         buttonView.addView(toggleVideo);
 
+        // set up the audio toggle button
         final ToggleButton toggleAudio = new ToggleButton(this);
         toggleAudio.setChecked(true);
         toggleAudio.setText("");
@@ -232,8 +246,8 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         toggleAudio.setLayoutParams(toggleAudioParams);
         buttonView.addView(toggleAudio);
 
+        // set up the end call button
         Button endCall = new Button(this);
-        //endCall.setText("End Call");
         endCall.setBackgroundDrawable(endcall);
         endCall.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -250,8 +264,12 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         buttonView.addView(endCall);
     }
 
+    /*
+    Called when another user joins the call
+     */
     @Override
     public void onStreamReceived(Session session, Stream stream) {
+        // add the video stream of the other user to the view
         Log.i(LOGTAG, "call to onStreamReceived");
         Subscriber subscriber = new Subscriber(VideoCallActivity.this, stream);
         subscriber.setVideoListener(this);
