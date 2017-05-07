@@ -1,7 +1,7 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
 /**
- * Created by Albert on 4/27/2017.
+ *  User class stores information about a user.
  */
 
 public class User{

@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     public boolean mainActivityActive;
     AsyncCall getSessions;
 
+    //handler changes session list view in main thread.
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -174,8 +175,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         super.onPause();
         mainActivityActive = false;
     }
+
+    /**
+     * Refreshes the Session List by making a GET request
+     */
     public void refresh(){
-        System.out.println("Refresh");
         AsyncResponse del = getSessions.delegate;
         getSessions = new AsyncCall();
         getSessions.delegate = del;
