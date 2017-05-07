@@ -1,8 +1,5 @@
 package edu.cornell.engineering.ewh.hippoandroid;
 
-import com.loopj.android.http.*;
-
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -10,20 +7,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by Lillyan on 4/30/17.
+ * Asynchronous REST call to authenticate with the Hippo Backend
  */
 
 public class GoogleRestClient extends AsyncTask<String, Void, String> {
@@ -34,14 +27,12 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
         StringBuffer response = new StringBuffer();
         try {
             String url = "https://ewh-hippo.herokuapp.com/auth/google";
-//            String url = "http://10.0.2.2:3000/auth/google";
+
             URL obj = new URL(url);
-//            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestProperty("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
-//            con.setDoOutput(false);
 
-            //add request header
+            //Add request header
             con.setRequestMethod("POST");
 
             //Request Parameters you want to send
@@ -62,13 +53,8 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
                 con.getErrorStream();
                 in = new BufferedReader(
                         new InputStreamReader(con.getErrorStream()));
-                System.out.println("error");
             }
             else {
-                System.out.println("\nSending 'POST' request to URL : " + url);
-                System.out.println("Post parameters : " + urlParameters);
-                System.out.println("Response Code : " + responseCode);
-
                 in = new BufferedReader(
                         new InputStreamReader(con.getInputStream()));
             }
@@ -79,10 +65,6 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
                 response.append(inputLine);
             }
             in.close();
-
-            //print result
-            System.out.println(response.toString());
-
         }
         catch (MalformedURLException e) {
             Log.d("malformed URL: ", e.getMessage());
@@ -97,7 +79,7 @@ public class GoogleRestClient extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String message) {
         try {
-            //process message
+            // Extract the auth token from the JSON response and call processFinish callback
             JSONObject jsonMessage = new JSONObject(message);
             String token = " Bearer " + jsonMessage.getString("token");
             delegate.processFinish(token);
