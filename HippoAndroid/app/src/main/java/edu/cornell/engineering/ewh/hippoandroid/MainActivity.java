@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
         //execute the async task
         getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
-      
+
         mainActivityActive = true; //true if user is on mainActivity.
           //new thread runs only while mainActivityActive == true
           Runnable r = new Runnable(){
@@ -216,8 +216,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             JSONArray calls = jsonObject.getJSONArray("calls");
             int myUserId = jsonObject.getInt("userId");
 
-            final CallSession[] sessions = new CallSession[calls.length()];
-
+            final ArrayList<CallSession> sessions = new ArrayList<CallSession>();
             for(int i = 0; i<calls.length();i++){
                 JSONObject call = calls.getJSONObject(i);
                 //add to list if call has not ended.
@@ -235,15 +234,19 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         }
                     }
 
-                    sessions[i] = new CallSession(convertDate(call.getString("endTime")), convertDate(call.getString("startTime")),
+                    sessions.add(new CallSession(convertDate(call.getString("endTime")), convertDate(call.getString("startTime")),
                             convertDate(call.getString("datetime")), call.getString("sessionId"), call.getString("name"),
-                            call.getBoolean("active"), users);
-                }
-            }
+                            call.getBoolean("active"), users));
 
+                }
+
+            }
+            for(int i =0; i<sessions.size();i++){
+                System.out.println(sessions.get(i));
+            }
             try {
                 SessionAdapter<CallSession> sessionsAdapter;
-                sessionsAdapter = new SessionAdapter<CallSession>(getApplicationContext(), R.layout.session_item, sessions);
+                sessionsAdapter = new SessionAdapter<CallSession>(getApplicationContext(), R.layout.session_item, sessions.toArray(new CallSession[sessions.size()]));
 
                 ListView sessionListView = (ListView) findViewById(R.id.session_list);
                 sessionListView.setAdapter(sessionsAdapter);
@@ -262,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                                             int position,
                                             long id) {
                         // Get clicked Session.
-                        CallSession call = sessions[position];
+                        CallSession call = sessions.get(position);
                         Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
                         intent.putExtra(SESSION_NAME, call.getName());
                         startActivity(intent);
