@@ -241,9 +241,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                 }
 
             }
-            for(int i =0; i<sessions.size();i++){
-                System.out.println(sessions.get(i));
-            }
             try {
                 SessionAdapter<CallSession> sessionsAdapter;
                 sessionsAdapter = new SessionAdapter<CallSession>(getApplicationContext(), R.layout.session_item, sessions.toArray(new CallSession[sessions.size()]));
