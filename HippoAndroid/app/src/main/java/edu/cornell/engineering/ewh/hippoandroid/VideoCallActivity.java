@@ -45,7 +45,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Publisher.PublisherListener, Subscriber.SubscriberListener,
         Subscriber.VideoListener, AsyncResponse {
 
-    public static final String API_KEY = "45817732";
+    public static final String API_KEY = "45843012";
     public static String SESSION_ID;
     public static String TOKEN;
     public static final String LOGTAG = "VideoCallActivity";
