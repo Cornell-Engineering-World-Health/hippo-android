@@ -39,13 +39,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /*
-Video call view - displays a single call
+ * Video call view displays the interface for a single call.
+ * Includes basic interface controls: video on/off, mute, end call.
  */
 public class VideoCallActivity extends AppCompatActivity implements Session.SessionListener,
         Publisher.PublisherListener, Subscriber.SubscriberListener,
         Subscriber.VideoListener, AsyncResponse {
 
-    public static final String API_KEY = "45843012";
+    public static final String API_KEY = "45843012"; // Change to your own API key
     public static String SESSION_ID;
     public static String TOKEN;
     public static final String LOGTAG = "VideoCallActivity";
@@ -89,14 +90,14 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Intent intent = getIntent();
         String sessionName = intent.getStringExtra(MainActivity.SESSION_NAME);
 
-        /*get screen size*/
+        // get screen size
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         height = metrics.heightPixels;
         width = metrics.widthPixels;
         buttonViewWidth = (int) (width*.75);
 
-        /*height and width of the end call, audio toggle, and video toggle buttons*/
+        // set height and width of the end call, audio toggle, and video toggle buttons
         button_height = (int) height/8;
         button_width = (int) width/5;
 
@@ -105,20 +106,18 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
         Log.i(LOGTAG, "button_height : " + button_height);
         Log.i(LOGTAG, "button_width : " + button_width);
 
-        //this to set delegate/listener back to this class
+        // this to set delegate/listener back to this class
         getSession.delegate = this;
 
-        /*API call to get the session*/
+        // API call to get the session
         SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
-
-        //execute the async task
         getSession.execute("https://ewh-hippo.herokuapp.com/api/videos/" + sessionName, token);
 
     }
 
     /*
-    Called when the API call has been made
+     * Called when the API call has been made
      */
     public void processFinish(String output) {
 
@@ -173,7 +172,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     }
 
     /*
-    Called when you successfully connect to an OpenTOK session
+     * Called upon successful connection to an OpenTOK session
      */
     @Override
     public void onConnected(final Session session) {
@@ -265,7 +264,7 @@ public class VideoCallActivity extends AppCompatActivity implements Session.Sess
     }
 
     /*
-    Called when another user joins the call
+     * Called when another user joins the session
      */
     @Override
     public void onStreamReceived(Session session, Stream stream) {
