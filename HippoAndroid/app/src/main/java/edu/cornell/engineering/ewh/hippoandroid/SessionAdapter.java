@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Created by erinchen on 5/2/17.
+ * Customizes upcoming session list font.
  */
 
 public class SessionAdapter<CallSession> extends ArrayAdapter<CallSession> {
