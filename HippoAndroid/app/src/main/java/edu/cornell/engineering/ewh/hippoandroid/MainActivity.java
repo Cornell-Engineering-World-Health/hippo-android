@@ -43,13 +43,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
 
-
+/*
+* MainActivity controls the main Upcoming Session List view. 
+* Refreshes the call list every minute, and creates the Intent to 
+* the video call view on click of a call.
+*/
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
     public static final String SESSION_NAME = "edu.cornell.engineering.ewh.hippoandroid.SESSION_NAME";
     public boolean mainActivityActive;
     AsyncCall getSessions;
 
-    //handler changes session list view in main thread.
+    // handler changes session list view in main thread.
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -87,17 +91,17 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         Typeface lato = Typeface.createFromAsset(this.getApplication().getAssets(), "fonts/Lato-Bold.ttf");
         mTitle.setTypeface(lato);
 
-        //this to set delegate/listener back to this class
+        // this to set delegate/listener back to this class
         getSessions.delegate = this;
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("APP", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("Authorization", "default, means there was no G_TOKEN");
 
-        //execute the async task
+        // execute the async task
         getSessions.execute("https://ewh-hippo.herokuapp.com/api/self", token);
 
-        mainActivityActive = true; //true if user is on mainActivity.
-          //new thread runs only while mainActivityActive == true
+        mainActivityActive = true; // true if user is on mainActivity.
+          // new thread runs only while mainActivityActive == true
           Runnable r = new Runnable(){
               @Override
               public void run() {
@@ -191,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     }
 
     /**
-     * convert date from UTC to local time.
+     * Convert date from UTC to local time.
      */
     public String convertDate(String date){
         try
@@ -208,7 +212,10 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         }
         return date;
     }
-
+    
+    /** 
+     * Generates upcoming call list, parsing out inactive calls.
+     */
     public void processFinish(String output) {
 
         try{
@@ -219,12 +226,14 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             final ArrayList<CallSession> sessions = new ArrayList<CallSession>();
             for(int i = 0; i<calls.length();i++){
                 JSONObject call = calls.getJSONObject(i);
-                //add to list if call has not ended.
+                
+                // add to list if the call has not ended.
                 if(call.getBoolean("active")){
                     JSONArray participants = call.getJSONArray("participants");
                     User[] users = new User[participants.length()-1];
                     int k = 0;
-                    //add participants except self.
+                    
+                    // add all call participants except yourself.
                     for(int j = 0; j< participants.length(); j++){
                         JSONObject member = participants.getJSONObject(j);
                         int pUserId = member.getInt("userId");
@@ -254,14 +263,15 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         return s1.getStartTime().compareTo(s2.getStartTime());
                     }
                 });
-
+                
+                // listens for user click on call
                 sessionListView.setOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent,
                                             View view,
                                             int position,
                                             long id) {
-                        // Get clicked Session.
+                        // get clicked Session.
                         CallSession call = sessions.get(position);
                         Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
                         intent.putExtra(SESSION_NAME, call.getName());
