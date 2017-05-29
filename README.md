@@ -1,6 +1,6 @@
 # hippo-android
 
-The Android application for hippo, a HIPAA-compliant video conferencing system. Powered by [hippo-backend](https://github.com/Cornell-Engineering-World-Health/hippo-backend "hippo-backend")'s REST API. Built with OpenTok, Google OAth, and Java. 
+The Android application for hippo, a HIPAA-compliant video conferencing system. Powered by [hippo-backend](https://github.com/Cornell-Engineering-World-Health/hippo-backend "hippo-backend")'s REST API. Built with OpenTok Android SDK and Google OAth. 
 
 Features include:
 * Secure video calls
