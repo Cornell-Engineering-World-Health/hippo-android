@@ -42,9 +42,6 @@ public class LoginActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-            // Views
-//        mStatusTextView = (TextView) findViewById(R.id.status);
-
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
@@ -240,6 +237,10 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Callback to be executed at the finish of GoogleRestClient async task
+     * Upon successful login we will be moved to MainActivity
+     */
     @Override
     public void processFinish(String token) {
         // Save Token
